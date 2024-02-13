@@ -22,93 +22,13 @@ export async function fetchSpell(spellObj) {
   return spell
 }
 
-export async function loadSpells(spells) {
-  return Promise.all(spells.map(fetchSpell))
+export async function loadSpells(spells, incrementer) {
+  incrementer = incrementer || (() => {})
+  const promises = spells.map(async(spell) => {
+    const result = await fetchSpell(spell);
+    incrementer()
+    return result
+  })
+
+  return Promise.all(promises)
 }
-
-fetchSpells()
-.then(res => {
-  loadSpells(res.results)
-  .then(console.log)
-})
-// function sortSpells(spells) {
-
-//   console.log(spells[0])
-
-//   const spellsByClassAndLevel = {
-//     cleric: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     },
-//     druid: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     },
-//     warlock: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     },
-//     sorcerer: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     },
-//     bard: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     },
-//     paladin: {
-//       1: [],
-//       2: [],
-//       3: [],
-//       4: [],
-//       5: [],
-//       6: [],
-//       7: [],
-//       8: [],
-//       9: [],
-//     }
-//   }
-  
-//   spells.forEach(spell => {
-//     spell.classes.forEach(clas => {
-//       spellsByClassAndLevel[clas.index][spell.level] = spell.index
-//     })
-//   })
-
-//   return spellsByClassAndLevel
-// }

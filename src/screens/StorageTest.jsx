@@ -5,6 +5,7 @@ import AsyncStorage from"@react-native-async-storage/async-storage";
 export default function StorageTest() {
 
   const [displayed, setDisplayed] = useState('')
+  const [spells, setSpells] = useState([])
   const [error, setError] = useState('')
 
   const handleSave = () => {
@@ -12,9 +13,7 @@ export default function StorageTest() {
     .then(() => {
       setDisplayed('saved "Rabbit"')
     })
-    .catch((err) => {
-      setError(err)
-    })
+    .catch(setError)
   }
 
   const handleFetch = () => {
@@ -22,9 +21,7 @@ export default function StorageTest() {
     .then((data) => {
       setDisplayed(`Fetched ${data ? data : 'nothing'} from storage.`)
     })
-    .catch((err) => {
-      setError(err)
-    })
+    .catch(setError)
   }
 
   const handleDelete = () => {
@@ -32,8 +29,26 @@ export default function StorageTest() {
     .then(() => {
       setDisplayed('Deleted')
     })
-    .catch((err) => {
-      setError(err)
+    .catch(setError)
+  }
+
+  const handleCleric2Spells = () => {
+    AsyncStorage.getItem('cleric')
+    .then((data) => {
+      if(data){
+        setSpells(JSON.parse(data)["2"])
+      } else {
+        setSpells([])
+      }
+    })
+    .catch(setError)
+  }
+
+  const deleteSpells = () => {
+    AsyncStorage.multiRemove(['paladin','cleric','ranger','bard','sorcerer','warlock','wizard','druid'])
+    .then(() => {
+      setDisplayed('Deleted')
+      AsyncStorage.setItem('spellsLoaded', 'false')
     })
   }
 
@@ -57,6 +72,21 @@ export default function StorageTest() {
       <TouchableOpacity onPress={handleDelete} className="bg-slate-200 py-2 px-5 rounded-xl my-3">
         <Text>Delete "Rabbit</Text>
       </TouchableOpacity>
+      <View className="flex flex-col">
+        <TouchableOpacity onPress={handleCleric2Spells} className="bg-green-200 py-2 px-5 rounded-xl my-3">
+          <Text>Fetch Level 2 Cleric Spells</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={deleteSpells} className="bg-red-200 py-2 px-5 rounded-xl my-3">
+          <Text>Delete Spells</Text>
+        </TouchableOpacity>
+      </View>
+      {spells && spells.map(spell => (
+        <View key={spell.index}>
+          <TouchableOpacity onPress={() => {}}>
+            <Text>{spell}</Text>
+          </TouchableOpacity>
+        </View>
+  ))}
     </View>
   )
 }
