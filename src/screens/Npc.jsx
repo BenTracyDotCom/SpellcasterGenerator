@@ -1,0 +1,1 @@
+import { View, TouchableOpacity, Text } from "react-native";

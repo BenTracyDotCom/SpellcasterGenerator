@@ -36,7 +36,6 @@ export default function Loading({ navigation }) {
                   //Sort spell names into class-based lists
                   const sorted = sortSpells(extendedSpells)
                   Object.keys(sorted).forEach(clas => {
-                    console.log(sorted[clas])
                     AsyncStorage.setItem(clas, JSON.stringify(sorted[clas]))
                   })
                   //Store full spells under their name in local storage

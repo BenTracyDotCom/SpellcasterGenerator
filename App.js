@@ -6,10 +6,14 @@ import { StatusBar } from 'expo-status-bar';
 import Launch from './src/screens/Launch';
 import StorageTest from './src/screens/StorageTest';
 import Loading from './src/screens/Loading';
+import AddNpc from './src/screens/AddNpc';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -25,6 +29,10 @@ export default function App() {
         <Stack.Screen
         name="Storage Test"
         component={StorageTest}
+        />
+        <Stack.Screen
+        name="Add NPC"
+        component={AddNpc}
         />
       </Stack.Navigator>
     </NavigationContainer>
