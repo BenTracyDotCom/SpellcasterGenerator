@@ -8,7 +8,6 @@
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
-  "type": "module",
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-navigation/native": "^6.1.10",

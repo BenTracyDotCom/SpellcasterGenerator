@@ -22,6 +22,15 @@ export async function fetchSpell(spellObj) {
   return spell
 }
 
+export async function loadSpells(spells) {
+  return Promise.all(spells.map(fetchSpell))
+}
+
+fetchSpells()
+.then(res => {
+  loadSpells(res.results)
+  .then(console.log)
+})
 // function sortSpells(spells) {
 
 //   console.log(spells[0])
