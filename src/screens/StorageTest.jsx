@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
-import AsyncStorage from"@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchSpells } from "../utilities/api.mjs";
 
 export default function StorageTest() {
 
@@ -10,46 +11,54 @@ export default function StorageTest() {
 
   const handleSave = () => {
     AsyncStorage.setItem('testData', 'Rabbit')
-    .then(() => {
-      setDisplayed('saved "Rabbit"')
-    })
-    .catch(setError)
+      .then(() => {
+        setDisplayed('saved "Rabbit"')
+      })
+      .catch(setError)
   }
 
   const handleFetch = () => {
     AsyncStorage.getItem('testData')
-    .then((data) => {
-      setDisplayed(`Fetched ${data ? data : 'nothing'} from storage.`)
-    })
-    .catch(setError)
+      .then((data) => {
+        setDisplayed(`Fetched ${data ? data : 'nothing'} from storage.`)
+      })
+      .catch(setError)
   }
 
   const handleDelete = () => {
     AsyncStorage.removeItem('testData')
-    .then(() => {
-      setDisplayed('Deleted')
-    })
-    .catch(setError)
+      .then(() => {
+        AsyncStorage.setItem("spellsLoaded", "false")
+          .then(() => {
+            setDisplayed('Deleted')
+          })
+      })
+      .catch(setError)
   }
 
   const handleCleric2Spells = () => {
     AsyncStorage.getItem('cleric')
-    .then((data) => {
-      if(data){
-        setSpells(JSON.parse(data)["2"])
-      } else {
-        setSpells([])
-      }
-    })
-    .catch(setError)
+      .then((data) => {
+        if (data) {
+          setSpells(JSON.parse(data)["2"])
+        } else {
+          setSpells([])
+        }
+      })
+      .catch(setError)
   }
 
-  const deleteSpells = () => {
-    AsyncStorage.multiRemove(['paladin','cleric','ranger','bard','sorcerer','warlock','wizard','druid'])
-    .then(() => {
-      setDisplayed('Deleted')
-      AsyncStorage.setItem('spellsLoaded', 'false')
-    })
+  const deleteSpells = async () => {
+    fetchSpells()
+      .then((data) => {
+        const allSpells = data.results.map(spell => (spell.index))
+        AsyncStorage.multiRemove([...allSpells, 'paladin', 'cleric', 'ranger', 'bard', 'sorcerer', 'warlock', 'wizard', 'druid', 'spells'])
+          .then(() => {
+            setDisplayed('Deleted')
+            AsyncStorage.setItem('spellsLoaded', 'false')
+          })
+      })
+      .catch(console.log)
   }
 
   return (
@@ -82,11 +91,11 @@ export default function StorageTest() {
       </View>
       {spells && spells.map(spell => (
         <View key={spell.index}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => { }}>
             <Text>{spell}</Text>
           </TouchableOpacity>
         </View>
-  ))}
+      ))}
     </View>
   )
 }

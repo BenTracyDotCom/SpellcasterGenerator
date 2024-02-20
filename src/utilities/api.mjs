@@ -22,11 +22,11 @@ export async function fetchSpell(spellObj) {
   return spell
 }
 
-export async function loadSpells(spells, incrementer) {
+export async function loadSpells(spells, incrementer, portionTotalLoading) {
   incrementer = incrementer || (() => {})
   const promises = spells.map(async(spell) => {
     const result = await fetchSpell(spell);
-    incrementer()
+    incrementer(spells.length, portionTotalLoading)
     return result
   })
 
