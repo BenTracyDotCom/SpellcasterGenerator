@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import races from '../features/npcs/races.mjs';
+import classNames from '../utilities/classNames.mjs';
 
 export default function AddNpc() {
 
@@ -13,12 +14,11 @@ export default function AddNpc() {
   const [clas, setClas] = useState("cleric")
   const [level, setLevel] = useState("1")
   const [classes, setClasses] = useState([])
-  const classNames = ["bard", "cleric", "druid", "sorcerer", "warlock", "paladin", "ranger"]
 
   useEffect(() => {
     AsyncStorage.multiGet(classNames)
     .then(data => {
-      setClasses(data)
+      setClasses(data.map(store => JSON.parse(store[1])))
     })
   }, [])
 
@@ -27,12 +27,11 @@ export default function AddNpc() {
       <TextInput
       placeholder="Name"
       />
+      {/* <Text>{JSON.stringify(classes[0])}</Text> */}
       <Picker selectedValue={clas} onValueChange={setClas}>
-        <Picker.Item label="Bard" value="bard" />
-        <Picker.Item label="Cleric" value="cleric" />
-        <Picker.Item label="Druid" value="druid" />
-        <Picker.Item label="Sorcerer" value="sorcerer" />
-        <Picker.Item label="Warlock" value="warlock" />
+        {classes && classes.map(clas => (
+          <Picker.Item label={clas.name} value={clas.index} key={clas.index} />
+        ))}
       </Picker>
       <Picker selectedValue={level} onValueChange={setLevel}>
         {Array(20).fill(1).map((val, i) => (

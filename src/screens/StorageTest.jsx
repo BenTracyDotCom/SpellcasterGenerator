@@ -58,7 +58,7 @@ export default function StorageTest() {
             AsyncStorage.setItem('spellsLoaded', 'false')
           })
       })
-      .catch(console.log)
+      .catch(setError)
   }
 
   return (

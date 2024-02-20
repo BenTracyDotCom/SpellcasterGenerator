@@ -10,7 +10,7 @@ import * as Progress from 'react-native-progress'
 export default function Loading({ navigation }) {
 
   //Not the most elegant solution but it works reliably:
-  
+
   //Pulling spells from API: 10%
   const indexPct = 10
   //Loading spells to storage: 5%
@@ -41,7 +41,7 @@ export default function Loading({ navigation }) {
                 return result
               })
               Promise.all(promises)
-              .then(setProgress(fetchAndLoadClassesPct))
+                .then(() => setProgress(fetchAndLoadClassesPct))
             }
             )
           fetchSpells()
@@ -57,7 +57,7 @@ export default function Loading({ navigation }) {
                   //Sort spell names into class-based lists
                   const sorted = sortSpells(extendedSpells)
                   Object.keys(sorted).forEach(clas => {
-                    AsyncStorage.setItem(clas, JSON.stringify(sorted[clas]))
+                    AsyncStorage.setItem(`${clas}Spells`, JSON.stringify(sorted[clas]))
                   })
                   setProgress(sortSpellsPct)
                   //Store full spells under their name in local storage
@@ -67,16 +67,17 @@ export default function Loading({ navigation }) {
                     return result
                   })
                   Promise.all(promises)
-                    .then(
+                    .then(() => {
                       AsyncStorage.setItem('spellsLoaded', 'true')
                         .then(() => {
                           setProgress(saveExtendedSpellsPct)
                           navigation.navigate('Launch')
                         })
+                    }
                     )
                 })
             })
-            .catch(console.log)
+            .catch((data) => console.log(data, "failed to fetch spells"))
         }
       })
   }, [])
