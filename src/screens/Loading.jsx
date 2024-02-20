@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { fetchSpells, loadSpells } from "../utilities/api.mjs";
+import { fetchSpells, loadSpells, fetchSpellcastingClasses } from "../utilities/api.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import sortSpells from "../utilities/sortByClassAndLevel.mjs";
 
@@ -9,11 +9,15 @@ import * as Progress from 'react-native-progress'
 
 export default function Loading({ navigation }) {
 
+  //Not the most elegant solution but it works reliably:
+  
   //Pulling spells from API: 10%
   const indexPct = 10
   //Loading spells to storage: 5%
   const loadIndexPct = 15
-  //Pulling extended info from API: 60%
+  //Fetching classes from API and loading into storage: 15%
+  const fetchAndLoadClassesPct = 30
+  //Pulling extended info from API: 45%
   const extendedSpellsAPIPct = 75
   //Sorting spells: 15%
   const sortSpellsPct = 90
@@ -22,32 +26,32 @@ export default function Loading({ navigation }) {
 
   const [progress, setProgress] = useState(0)
 
-  const useIncrementer = (divisor, max) => {
-    console.log(progress)
-    //console.log(divisor, "divisor")
-    // console.log(max, "should be 60")
-    // console.log((divisor / max) * 100 + " percent pulled from api")
-    setProgress(max)
-    //  max / divisor)
-  }
-
   useEffect(() => {
-    console.log(progress, "in useeffect")
     AsyncStorage.getItem('spellsLoaded')
       .then(data => {
         if (data === 'true') {
           setProgress(100)
           navigation.navigate('Launch')
         } else {
+          fetchSpellcastingClasses()
+            .then(data => {
+              const promises = data.map(async (clas) => {
+                const result = await AsyncStorage.setItem(clas.index, JSON.stringify(clas));
+                // Increment loading bar here
+                return result
+              })
+              Promise.all(promises)
+              .then(setProgress(fetchAndLoadClassesPct))
+            }
+            )
           fetchSpells()
             .then(data => {
-              const spells = data
               setProgress(indexPct)
               //Add spell index to local storage
-              AsyncStorage.setItem('spells', JSON.stringify(spells.results))
+              AsyncStorage.setItem('spells', JSON.stringify(data.results))
               setProgress(loadIndexPct)
               //Request extended version of each of the spells
-              loadSpells(spells.results)
+              loadSpells(data.results)
                 .then(extendedSpells => {
                   setProgress(extendedSpellsAPIPct)
                   //Sort spell names into class-based lists

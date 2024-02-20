@@ -10,16 +10,16 @@ export default function AddNpc() {
 
   //At this point, all classes are loaded
   const [race, setRace] = useState("human")
-  const [classesLoaded, setClassesLoaded] = useState(false)
   const [clas, setClas] = useState("cleric")
   const [level, setLevel] = useState("1")
-  const classes = ["Bard", "Cleric",
-]
+  const [classes, setClasses] = useState([])
+  const classNames = ["bard", "cleric", "druid", "sorcerer", "warlock", "paladin", "ranger"]
 
-  useEffect(async () => {
-    await AsyncStorage.getItem(
-      //Load all classes here  
-    )
+  useEffect(() => {
+    AsyncStorage.multiGet(classNames)
+    .then(data => {
+      setClasses(data)
+    })
   }, [])
 
   return(
