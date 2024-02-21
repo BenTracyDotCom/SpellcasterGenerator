@@ -43,5 +43,3 @@ export async function loadSpells(spells) {
   })
   return Promise.all(promises)
 }
-
-fetchSpellcastingClasses().then(console.log)

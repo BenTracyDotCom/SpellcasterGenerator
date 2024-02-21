@@ -1,7 +1,17 @@
+import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import NpcList from "../features/npcs/NpcList";
 
 
 export default function Launch({ navigation }) {
+
+  const [npcsLoaded, setNpcsLoaded] = useState(false)
+  const [npcs, setNPCs] = useState([])
+
+  useEffect(() => {
+    
+  })
+
 
   const handleStorageTest = () => {
     navigation.navigate('Storage Test')
@@ -22,6 +32,7 @@ export default function Launch({ navigation }) {
           Add NPC
         </Text>
       </TouchableOpacity>
+      <NpcList npcs={["Jim", "Bim", "Jimself"]} />
     </View>
   )
 }
