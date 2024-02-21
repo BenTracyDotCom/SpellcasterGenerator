@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+//import "./nativewind-output";
 
 import { StatusBar } from 'expo-status-bar';
 import Launch from './src/screens/Launch';

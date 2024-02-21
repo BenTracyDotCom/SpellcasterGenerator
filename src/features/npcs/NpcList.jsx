@@ -5,10 +5,10 @@ import NpcTile from "./NpcTile";
 export default function NpcList({ npcs }) {
 
   return (
-    <View>
-{npcs && npcs.map((npc) => (
-  <NpcTile npc={npc} />
-))}
+    <View className="text-slate-500">
+      {npcs && npcs.map((npc, i) => (
+        <NpcTile npc={npc} key={i} />
+      ))}
     </View>
   )
 }

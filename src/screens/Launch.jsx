@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import NpcList from "../features/npcs/NpcList";
+import Button from "../features/components/Button";
 
 
 export default function Launch({ navigation }) {
@@ -22,16 +23,8 @@ export default function Launch({ navigation }) {
 
   return(
     <View>
-      <TouchableOpacity className="bg-blue-500 p-3 rounded-full mx-5 my-2 items-center" onPress={handleStorageTest}>
-        <Text className="text-white font-bold">
-          Storage Test Screen
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="bg-blue-500 p-3 rounded-full mx-5 my-2 items-center" onPress={handleAddNpc}>
-        <Text className="text-white font-bold">
-          Add NPC
-        </Text>
-      </TouchableOpacity>
+      <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
+      <Button text={"Add NPC"} onPress={handleAddNpc} />
       <NpcList npcs={["Jim", "Bim", "Jimself"]} />
     </View>
   )
