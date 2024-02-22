@@ -33,7 +33,7 @@ export default function Loading({ navigation }) {
           setProgress(100)
           navigation.navigate('Launch')
         } else {
-          fetchSpellcastingClasses()
+          fetchClasses()
             .then(data => {
               const promises = data.map(async (clas) => {
                 const result = await AsyncStorage.setItem(clas.index, JSON.stringify(clas));

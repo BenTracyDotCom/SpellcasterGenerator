@@ -1,45 +1,55 @@
 import classNames from "./classNames.mjs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export async function fetchClasses() {
-  const response = await fetch("https://www.dnd5eapi.co/api/classes")
-  const classes = response.json();
-  return classes
+const api = {
+  url: 'https://www.dnd5eapi.co',
+  fetchClas: async function(clas) {
+    let response
+    if (clas.url) {
+      response = await fetch(url + classObj.url)
+    } else {
+      response = await fetch(this.url + '/classes/' + clas)
+    }
+    const classData = response.json();
+    return classData
+  },
+  fetchClasses: async function() {
+    const promises = classNames.map(clas => (
+      this.fetchClass(clas)
+    ))
+    return Promise.all(promises)
+  },
+  fetchClassSpells: async function(clas) {
+    const response = await fetch(this.url + clas.spells)
+    const spells = response.json();
+    return spells
+  },
+  fetchClassLevels: async function(clas) {
+    const response = await fetch(this.url + clas.levels)
+    const levels = response.json()
+    return levels
+  },
+  fetchSpell: async function(spellObj) {
+    const response = await fetch(this.url + spellObj.url)
+    const spell = response.json()
+    return spell
+  },
+  expandSpells: async function(spells) {
+    const promises = spells.map(spell => (
+      this.fetchSpell(spell)
+    ))
+    return Promise.all(promises)
+  }
 }
 
-export async function fetchSpellcastingClasses() {
-  const promises = classNames.map(clas => (
-    fetchClass(clas)
+const demoClas = {
+  "spells": "/api/classes/wizard/spells",
+  "levels": "/api/classes/wizard/levels"
+}
+
+api.fetchClassLevels(demoClas)
+  .then(data => (
+    console.log(data[0])
   ))
-  return Promise.all(promises)
-}
 
-export async function fetchClass(clas) {
-  let response
-  if(clas.url){
-    response = await fetch(`https://www.dnd5eapi.co${classObj.url}`)
-  } else {
-    response = await fetch(`https://www.dnd5eapi.co/api/classes/${clas}`)
-  } 
-  const classData = response.json();
-  return classData
-}
-
-export async function fetchSpells() {
-  const response = await fetch("https://www.dnd5eapi.co/api/spells")
-  const spells = response.json();
-  return spells
-}
-
-export async function fetchSpell(spellObj) {
-  const response = await fetch(`https://www.dnd5eapi.co${spellObj.url}`)
-  const spell = response.json()
-  return spell
-}
-
-export async function loadSpells(spells) {
-  const promises = spells.map(async(spell) => {
-    const result = await fetchSpell(spell);
-    return result
-  })
-  return Promise.all(promises)
-}
+export default api
