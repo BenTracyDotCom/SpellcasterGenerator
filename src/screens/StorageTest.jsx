@@ -26,13 +26,14 @@ export default function StorageTest() {
   }
 
   const handleDelete = () => {
-    AsyncStorage.removeItem('testData')
-      .then(() => {
-        AsyncStorage.setItem("spellsLoaded", "false")
-          .then(() => {
-            setDisplayed('Deleted')
-          })
-      })
+    AsyncStorage.getAllKeys()
+    .then(keys => {
+      const promises = keys.map(key => (
+        AsyncStorage.removeItem(key)
+      ))
+      return Promise.all(promises)
+    })
+    .then(setDisplayed('Deleted'))
       .catch(setError)
   }
 
