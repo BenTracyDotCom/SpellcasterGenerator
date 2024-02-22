@@ -6,12 +6,11 @@ import races from '../utilities/races.mjs';
 import toIndex from '../utilities/toIndex.mjs';
 import classNames from '../utilities/classNames.mjs';
 import Button from '../components/Button';
+import db from '../utilities/db.mjs';
+import parseSpellInfo from '../utilities/parseSpellInfo.mjs';
 
 export default function AddNpc() {
 
-
-
-  //At this point, all classes are loaded
   const [name, setName] = useState('New NPC')
   const [clas, setClas] = useState('')
 
@@ -21,6 +20,7 @@ export default function AddNpc() {
     subrace: 'Hill',
     clas: 'cleric',
     level: '1',
+    modifiers: {},
     spells: {}
   })
 
@@ -44,6 +44,7 @@ export default function AddNpc() {
     setForm({ ...form, name: e })
   }
   const handleRace = (e) => {
+    //Standard array: 15, 14, 13, 12, 10, 8
     const race = races.filter(race => (race.name === e))[0]
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
@@ -68,7 +69,17 @@ export default function AddNpc() {
 
   //TODO: Display pertinent stat blocks once race & class are selected
 
-  //TODO: Parse and display spell slots and prepared spells per level
+  const handleSpellInfo = () => {
+    db.getSpellcastingInfo(form.clas, form.level)
+    .then(info => {
+      if(!info.spells_known){
+        parseSpellInfo
+      } else {
+        parseSpellInfo(info)
+      }
+      //TODO: Parse and display spell slots and prepared spells per level
+    })
+  }
 
   const handleSubmit = () => {
     //TODO:
@@ -113,6 +124,7 @@ export default function AddNpc() {
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
+      <Button text="Run the spell info finder" onPress={handleSpellInfo} />
 
       <Button text="Submit" onPress={handleSubmit} />
 

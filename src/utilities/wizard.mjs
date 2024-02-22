@@ -1,4 +1,4 @@
-export default wizard = {
+const wizard = {
 	"index": "wizard",
 	"name": "Wizard",
 	"hit_die": 6,
@@ -289,3 +289,5 @@ export default wizard = {
 	"spells": "/api/classes/wizard/spells",
 	"url": "/api/classes/wizard"
 }
+
+export default wizard

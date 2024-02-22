@@ -2,16 +2,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api.mjs";
 import races from "./races.mjs";
 
-/*================= DB ORGANIZATION =====================
+/*================= DB ORGANIZATION ==========================
 
-races              -> all races with bonus, subrace info
-class-index        -> all class info
-class-index-spells -> spells in that class' spellbook(short version)
-class-index-levels -> spell slots, proficiency bonus/level
-spell-index        -> expanded version of the spell   */
+races              -> (arr) all races with bonus, subrace info
+class-index        -> (obj) all class info
+class-index-spells -> (arr) spells in that class' spellbook(short version)
+class-index-levels -> (arr) spell slots, proficiency bonus/level
+spell-index        -> (obj) expanded version of the spell
+npcs               -> (arr) all npcs by index                
+npc-index          -> (obj) specific npc info                 */
 
 const db = {
   races: races,
+  setLoaded: async function () {
+    return AsyncStorage.setItem('dataLoaded', 'true')
+  },
   storeRaces: async function () {
     return AsyncStorage.setItem('races', JSON.stringify(this.races))
   },
@@ -20,7 +25,7 @@ const db = {
       .then(data => {
         cb('Storing classes...')
         const promises = data.map((clas) => (
-          //For each class, make an entry for the class, the spells for that class, and level info for that class.
+          //For each class, this creates an entry for the class, the spells for that class, and level info for that class.
           Promise.all([
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
             api.fetchClassSpells(clas)
@@ -58,7 +63,28 @@ const db = {
         cb('Spells stored')
       })
       .catch(err => cb("Error storing spells: " + err))
-  }
+  },
+  getLevelInfo: async function (clas, level) {
+    return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
+      .then(store => {
+        const levels = JSON.parse(store)
+        return levels[level - 1]
+      })
+  },
+  getSpellcastingInfo: async function (clas, level) {
+    return this.getLevelInfo(clas, level)
+    .then(info => {
+      const relevantInfo = {};
+      const spellcasting = info.spellcasting
+      for(let i = 0; i < Object.keys(spellcasting).length; i ++){
+        let key = Object.keys(spellcasting)[i]
+        if(spellcasting[key] > 0){
+          relevantInfo[key] =  spellcasting[key]
+        }
+      }
+      return relevantInfo
+    })
+  },
 
 }
 
