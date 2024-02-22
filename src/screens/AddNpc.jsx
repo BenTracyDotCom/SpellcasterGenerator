@@ -8,6 +8,7 @@ import classNames from '../utilities/classNames.mjs';
 import Button from '../components/Button';
 import db from '../utilities/db.mjs';
 import parseSpellInfo from '../utilities/parseSpellInfo.mjs';
+import parseModifiers from '../utilities/parseModifiers.mjs';
 
 export default function AddNpc() {
 
@@ -51,8 +52,14 @@ export default function AddNpc() {
       setHasSubraces(true);
       setForm({ ...form, race: e, subrace: race.subraces[0].name })
     } else {
-      setHasSubraces(false)
-      setForm({ ...form, race: e, subrace: null })
+      db.getClass(form.clas)
+      .then(expandedClass => {
+        setHasSubraces(false)
+        const race = races.filter(race => (race.name === e))[0]
+        const subrace = race.subraces[0]
+        const parsedModifiers = parseModifiers(expandedClass, subrace)
+        setForm({ ...form, race: e, subrace: 'Normal' , modifiers: parsedModifiers })
+      })
     }
   }
   const handleSubrace = (e) => {
@@ -73,7 +80,7 @@ export default function AddNpc() {
     db.getSpellcastingInfo(form.clas, form.level)
     .then(info => {
       if(!info.spells_known){
-        parseSpellInfo
+        //Parse spell info, but pass in (spellObj, level, modifier)
       } else {
         parseSpellInfo(info)
       }

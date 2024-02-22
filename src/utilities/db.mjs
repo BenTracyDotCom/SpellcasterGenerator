@@ -85,7 +85,9 @@ const db = {
       return relevantInfo
     })
   },
-
+  getClass: async function (clas) {
+    return AsyncStorage.getItem(clas)
+  }
 }
 
 export default db

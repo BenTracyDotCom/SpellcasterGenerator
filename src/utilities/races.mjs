@@ -127,7 +127,7 @@ export default [
         bonuses: {
           //any 1
           1: 1,
-          wis: 2
+          cha: 2
         }
       }
     ]

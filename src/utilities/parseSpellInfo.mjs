@@ -5,7 +5,6 @@ const parseSpellInfo = (spellObj, level, modifier) => {
     spells_known?: num,  
   }
   */
- console.log(spellObj)
   const parsed = {}
   if(spellObj.spells_known){
     parsed.spells_known = spellObj.spells_known
