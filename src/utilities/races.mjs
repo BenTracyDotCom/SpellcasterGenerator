@@ -1,4 +1,4 @@
-//str/dex/con/int/wis/cha
+//TODO: Imploement racial abilities (dragonborn breath, etc.)
 
 export default [
   {

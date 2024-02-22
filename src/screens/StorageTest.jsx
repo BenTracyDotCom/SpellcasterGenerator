@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchSpells } from "../utilities/api.mjs";
+import Button from "../components/Button";
 
-export default function StorageTest() {
+export default function StorageTest({ navigation }) {
 
   const [displayed, setDisplayed] = useState('')
   const [spells, setSpells] = useState([])
@@ -26,40 +26,29 @@ export default function StorageTest() {
   }
 
   const handleDelete = () => {
-    AsyncStorage.getAllKeys()
-    .then(keys => {
-      const promises = keys.map(key => (
-        AsyncStorage.removeItem(key)
-      ))
-      return Promise.all(promises)
+    AsyncStorage.clear()
+      .then(setDisplayed('Storage cleared.'))
+      .catch(setError)
+  }
+
+  const handleClericSpell = () => {
+    AsyncStorage.getItem('cleric-spells')
+      .then((data) => {
+          setSpells(data ? JSON.parse(data).map(JSON.stringify) : ["Nothing here, boss"])
+      })
+      .catch(setError)
+  }
+
+  const handleCleric3 = () => {
+    AsyncStorage.getItem('cleric-levels')
+    .then(data => {
+      setSpells(data ? [JSON.stringify(data)] : ["Nothing here, boss"])
     })
-    .then(setDisplayed('Deleted'))
-      .catch(setError)
+    .catch(setError)
   }
 
-  const handleCleric2Spells = () => {
-    AsyncStorage.getItem('cleric')
-      .then((data) => {
-        if (data) {
-          setSpells(JSON.parse(data)["2"])
-        } else {
-          setSpells([])
-        }
-      })
-      .catch(setError)
-  }
-
-  const deleteSpells = async () => {
-    fetchSpells()
-      .then((data) => {
-        const allSpells = data.results.map(spell => (spell.index))
-        AsyncStorage.multiRemove([...allSpells, 'paladin', 'cleric', 'ranger', 'bard', 'sorcerer', 'warlock', 'wizard', 'druid', 'spells'])
-          .then(() => {
-            setDisplayed('Deleted')
-            AsyncStorage.setItem('spellsLoaded', 'false')
-          })
-      })
-      .catch(setError)
+  handleSpell = () => {
+    //TODO: Navigate to spell screen once built
   }
 
   return (
@@ -73,25 +62,14 @@ export default function StorageTest() {
       <Text className="text-red-500">
         {error}
       </Text>
-      <TouchableOpacity onPress={handleSave} className="bg-slate-200 py-2 px-5 rounded-xl my-3">
-        <Text>Save "Rabbit</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleFetch} className="bg-slate-200 py-2 px-5 rounded-xl my-3">
-        <Text>Fetch "Rabbit</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleDelete} className="bg-slate-200 py-2 px-5 rounded-xl my-3">
-        <Text>Delete "Rabbit</Text>
-      </TouchableOpacity>
-      <View className="flex flex-col">
-        <TouchableOpacity onPress={handleCleric2Spells} className="bg-green-200 py-2 px-5 rounded-xl my-3">
-          <Text>Fetch Level 2 Cleric Spells</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={deleteSpells} className="bg-red-200 py-2 px-5 rounded-xl my-3">
-          <Text>Delete Spells</Text>
-        </TouchableOpacity>
-      </View>
-      {spells && spells.map(spell => (
-        <View key={spell.index}>
+      <Button text="Save 'Rabbit'" onPress={handleSave} />
+      <Button text="Fetch 'Rabbit'" onPress={handleFetch} />
+      <Button text="Clear Storage" onPress={handleDelete} />
+      <Button text="Fetch Cleric Spells" onPress={handleClericSpell} />
+      <Button text="Cleric 3 Info" onPress={handleCleric3} />
+      <Button text="Loading screen" onPress={() => navigation.navigate("Loading")} />
+      {spells && spells.map((spell, i) => (
+        <View key={i}>
           <TouchableOpacity onPress={() => { }}>
             <Text>{spell}</Text>
           </TouchableOpacity>

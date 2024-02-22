@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import races from '../features/npcs/races.mjs';
+import races from '../utilities/races.mjs';
 import toIndex from '../utilities/toIndex.mjs';
 import classNames from '../utilities/classNames.mjs';
 import Button from '../components/Button';
