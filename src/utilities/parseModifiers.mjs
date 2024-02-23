@@ -1,5 +1,5 @@
-const parseModifiers = (clas, subrace) => {
-  clas = JSON.parse(clas)
+const parseModifiers = (castingAbility, subrace) => {
+
   const modifiers = {
     con: 14,
     str: 12,
@@ -8,8 +8,9 @@ const parseModifiers = (clas, subrace) => {
     cha: 0,
     int: 0
   }
-  const castingModifier = clas.spellcasting.spellcasting_ability.index
-  modifiers[castingModifier] = 15
+
+
+  modifiers[castingAbility] = 15
 
   Object.keys(subrace.bonuses).forEach(key => {
     if(!parseInt(key)){

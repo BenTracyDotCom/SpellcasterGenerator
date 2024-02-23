@@ -3,6 +3,7 @@
 export default [
   {
     name: "Dwarf",
+    index: "dwarf",
     subraces: [
       {
         name: "Hill",
@@ -22,6 +23,7 @@ export default [
   },
   {
     name: "Elf",
+    index: "elf",
     subraces: [
       {
         name: "High",
@@ -48,6 +50,7 @@ export default [
   },
   {
     name: "Halfling",
+    index: "halfling",
     subraces: [
       {
         name: "Lightfoot",
@@ -67,6 +70,7 @@ export default [
   },
   {
     name: "Human",
+    index: "human",
     subraces: [
       {
         name: "Normal",
@@ -90,6 +94,7 @@ export default [
   },
   {
     name: "Dragonborn",
+    index: "dragonborn",
     subraces: [
       {
         name: "Normal",
@@ -102,6 +107,7 @@ export default [
   },
   {
     name: "Gnome",
+    index: "gnome",
     subraces: [
       {
         name: "Forest",
@@ -121,6 +127,7 @@ export default [
   },
   {
     name: "Half-Elf",
+    index: "half-elf",
     subraces: [
       {
         name: "Normal",
@@ -134,6 +141,7 @@ export default [
   },
   {
     name: "Half-Orc",
+    index: "half-orc",
     subraces: [
       {
         name: "Normal",
@@ -146,6 +154,7 @@ export default [
   },
   {
     name: "Tiefling",
+    index: "tiefling",
     subraces: [
       {
         name: "Normal",

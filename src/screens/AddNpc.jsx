@@ -13,64 +13,89 @@ import parseModifiers from '../utilities/parseModifiers.mjs';
 export default function AddNpc() {
 
   const [name, setName] = useState('New NPC')
-  const [clas, setClas] = useState('')
+  const [classes, setClasses] = useState([])
+  const [clas, setClas] = useState({})
+  const [race, setRace] = useState(races[0])
+  const [subrace, setSubrace] = useState(races[0].subraces[0])
+  const [subraces, setSubraces] = useState(races[0].subraces)
+  const [hasSubraces, setHasSubraces] = useState(true)
+  const [error, setError] = useState('')
 
   const [form, setForm] = useState({
     name: '',
-    race: 'Dwarf',
-    subrace: 'Hill',
-    clas: 'cleric',
+    race: race.name,
+    subrace: subrace.name,
+    clas: 'Cleric',
     level: '1',
+    spellcastingAbility: 'wis',
     modifiers: {},
     spells: {}
   })
 
-  const [classes, setClasses] = useState([])
-  const [subraces, setSubraces] = useState(races[0].subraces)
-  const [hasSubraces, setHasSubraces] = useState(true)
 
   useEffect(() => {
     AsyncStorage.multiGet(classNames)
       .then(data => {
-        setClasses(data.map(store => JSON.parse(store[1])))
+        const loadedClasses = data.map(store => (JSON.parse(store[1])))
+        setClasses(loadedClasses)
+        setClas(loadedClasses[0])
+        setForm({ ...form, clas: loadedClasses[0].name })
       })
+      .catch(setError)
   }, [])
 
+  const updateModifiers = (clas, race, subrace) => {
+    clas = clas || form.clas
+    race = race || form.race
+    subrace = subrace || form.subrace
+
+    const expandedClass = classes.find(entry => (entry.name === clas))
+    const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
+    const expandedSubrace = races.find(raceObj => (raceObj.name === race))
+      .subraces.find(subraceObj => (subraceObj.name === subrace))
+    const parsedModifiers = parseModifiers(castingAbility, expandedSubrace)
+    setForm({ ...form, modifiers: parsedModifiers })
+  }
+
+  //Refactor to prevent manually re-finding an expanded race, subrace, class, or modifiers in every handler function, 
+
+
   const handleName = (e) => {
-    if(e){
+    if (e) {
       setName(e)
     } else {
       setName('New NPC')
     }
     setForm({ ...form, name: e })
   }
+
   const handleRace = (e) => {
-    //Standard array: 15, 14, 13, 12, 10, 8
     const race = races.filter(race => (race.name === e))[0]
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
       setHasSubraces(true);
       setForm({ ...form, race: e, subrace: race.subraces[0].name })
     } else {
-      db.getClass(form.clas)
-      .then(expandedClass => {
-        setHasSubraces(false)
-        const race = races.filter(race => (race.name === e))[0]
-        const subrace = race.subraces[0]
-        const parsedModifiers = parseModifiers(expandedClass, subrace)
-        setForm({ ...form, race: e, subrace: 'Normal' , modifiers: parsedModifiers })
-      })
+      const expandedClass = classes.find(clas => (clas.index === form.clas))
+      setHasSubraces(false)
+      const subrace = race.subraces[0]
+      updateModifiers(null, e, null)
+      setForm({ ...form, race: e, subrace: 'Normal' })
     }
   }
+
   const handleSubrace = (e) => {
+    updateModifiers(null, null, e)
     setForm({ ...form, subrace: e })
   }
+
   const handleClass = (e) => {
-    const indexed = e.toLowerCase()
-    setForm({ ...form, clas:indexed })
-    setClas(e)
+    updateModifiers(e, null, null)
+    setForm({ ...form, clas: e })
   }
+
   const handleLevel = (e) => {
+    //TODO: update spell info
     setForm({ ...form, level: e })
   }
 
@@ -78,32 +103,32 @@ export default function AddNpc() {
 
   const handleSpellInfo = () => {
     db.getSpellcastingInfo(form.clas, form.level)
-    .then(info => {
-      if(!info.spells_known){
-        //Parse spell info, but pass in (spellObj, level, modifier)
-      } else {
-        parseSpellInfo(info)
-      }
-      //TODO: Parse and display spell slots and prepared spells per level
-    })
+      .then(info => {
+        if (!info.spells_known) {
+          //Parse spell info, but pass in (spellObj, level, modifier)
+        } else {
+          parseSpellInfo(info)
+        }
+        //TODO: Parse and display spell slots and prepared spells per level
+      })
   }
 
   const handleSubmit = () => {
     //TODO:
     //Expand all of the spells into their full forms
     //check for an array of npc's
-      //if there is one,
-        //parse it, push the new NPC into it, stringify & store it
-      //if not,
-        //create a new array with this NPC as the first entry
-        //stringify the array, then store it
+    //if there is one,
+    //parse it, push the new NPC into it, stringify & store it
+    //if not,
+    //create a new array with this NPC as the first entry
+    //stringify the array, then store it
   }
 
   return (
     <View>
 
       <Text>{name}</Text>
-      <Text>{`${form.race}${form.subrace ? `(${form.subrace})` : ''} ${clas} ${form.level}`}</Text>
+      <Text>{`${form.race}${form.subrace ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
 
       <TextInput placeholder="Name" onChangeText={handleName} />
 
