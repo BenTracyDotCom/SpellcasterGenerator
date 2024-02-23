@@ -1,7 +1,10 @@
 import classNames from "./classNames.mjs";
+import { default as gql } from "./graphql.mjs";
+import { print } from 'graphql';
 
 const api = {
   url: 'https://www.dnd5eapi.co',
+  graphqlEndpoint: 'https://www.dnd5eapi.co/graphql/',
   classNames: classNames,
   _fetchClass: async function (clas) {
     let response
@@ -12,6 +15,20 @@ const api = {
     }
     const classData = response.json();
     return classData
+  },
+  fetchSpellsByClass: async function (clas) {
+    return fetch(this.graphqlEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: print(gql.spellsByClassQuery),
+        variables: { index: clas }
+      })
+    })
+      .then(res => (res.json()))
   },
   fetchClasses: async function (cb) {
     cb('Fetching classes...')
@@ -51,3 +68,5 @@ const api = {
 }
 
 export default api
+
+api.fetchSpellsByClass('cleric')

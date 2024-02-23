@@ -3,23 +3,26 @@ import api from "./api.mjs";
 import races from "./races.mjs";
 
 /*================= DB ORGANIZATION ==========================
-
-races              -> (arr) all races with bonus, subrace info
-class-index        -> (obj) all class info
+  
+races -> (arr) all races with bonus, subrace info
+class-index -> (obj) all class info
 class-index-spells -> (arr) spells in that class' spellbook(short version)
 class-index-levels -> (arr) spell slots, proficiency bonus/level
-spell-index        -> (obj) expanded version of the spell
-npcs               -> (arr) all npcs by index                
-npc-index          -> (obj) specific npc info                 */
+spell-index -> (obj) expanded version of the spell
+npcs -> (arr) all npcs by index
+npc-index -> (obj) specific npc info */
 
 const db = {
   races: races,
+
   setLoaded: async function () {
     return AsyncStorage.setItem('dataLoaded', 'true')
   },
+
   storeRaces: async function () {
     return AsyncStorage.setItem('races', JSON.stringify(this.races))
   },
+
   storeClasses: async function (cb) {
     api.fetchClasses(cb)
       .then(data => {
@@ -28,10 +31,11 @@ const db = {
           //For each class, this creates an entry for the class, the spells for that class, and level info for that class.
           Promise.all([
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
-            api.fetchClassSpells(clas)
-              .then(classSpells => (
-                AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.results))
-              ))
+            api.fetchSpellsByClass(clas.index)
+              .then(classSpells => {
+                console.log(classSpells.data, " spells per class")
+                //AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.results))
+              })
               .catch(err => console.log("error fetching class-specific spells: ", err)),
             api.fetchClassLevels(clas)
               .then(classLevels => (
@@ -47,6 +51,7 @@ const db = {
       })
       .catch(err => cb('Error storing classes: ' + err))
   },
+
   storeSpells: async function (cb) {
     cb('Storing spells...')
     api.fetchSpells(cb)
@@ -55,6 +60,7 @@ const db = {
       ))
       .then(expandedSpells => {
         const promises = expandedSpells.map(spell => (
+          //Now we've got spell levels to add to spells.
           AsyncStorage.setItem(spell.index, JSON.stringify(spell))
         ))
         return Promise.all(promises)
@@ -64,6 +70,7 @@ const db = {
       })
       .catch(err => cb("Error storing spells: " + err))
   },
+
   getLevelInfo: async function (clas, level) {
     return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
       .then(store => {
@@ -71,24 +78,25 @@ const db = {
         return levels[level - 1]
       })
   },
+
   getSpellcastingInfo: async function (clas, level) {
     return this.getLevelInfo(clas, level)
-    .then(info => {
-      const relevantInfo = {};
-      const spellcasting = info.spellcasting
-      for(let i = 0; i < Object.keys(spellcasting).length; i ++){
-        let key = Object.keys(spellcasting)[i]
-        if(spellcasting[key] > 0){
-          relevantInfo[key] =  spellcasting[key]
+      .then(info => {
+        const relevantInfo = {};
+        const spellcasting = info.spellcasting
+        for (let i = 0; i < Object.keys(spellcasting).length; i++) {
+          let key = Object.keys(spellcasting)[i]
+          if (spellcasting[key] > 0) {
+            relevantInfo[key] = spellcasting[key]
+          }
         }
-      }
-      return relevantInfo
-    })
+        return relevantInfo
+      })
   },
+
   getClass: async function (clas) {
     return AsyncStorage.getItem(clas)
   }
 }
 
 export default db
-
