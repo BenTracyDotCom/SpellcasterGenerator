@@ -25,15 +25,15 @@ const db = {
 
   storeClasses: async function (cb) {
     api.fetchClasses(cb)
-      .then(data => {
-        cb('Storing classes...')
-        const promises = data.map((clas) => (
-          //For each class, this creates an entry for the class, a spell list for that class, and level info for that class.
-          Promise.all([
+    .then(data => {
+      cb('Storing classes...')
+      //For each class, this creates an entry for the class, a spell list for that class, and level info for that class.
+        const promises = data.map((clas) => {
+          const promises = [
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
             api.fetchSpellsByClass(clas.index)
               .then(classSpells => (
-                AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.results))
+                AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.data.class))
               ))
               .catch(err => console.log("error fetching class-specific spells: ", err)),
             api.fetchClassLevels(clas)
@@ -41,8 +41,9 @@ const db = {
                 AsyncStorage.setItem(clas.index + '-levels', JSON.stringify(classLevels))
               ))
               .catch(err => console.log("error fetching class-specific levels: ", err))
-          ])
-        ))
+          ]
+          return Promise.all(promises)
+        })
         return Promise.all(promises)
       })
       .then(() => {
@@ -59,7 +60,6 @@ const db = {
       ))
       .then(expandedSpells => {
         const promises = expandedSpells.map(spell => (
-          //Now we've got spell levels to add to spells.
           AsyncStorage.setItem(spell.index, JSON.stringify(spell))
         ))
         return Promise.all(promises)
@@ -73,6 +73,7 @@ const db = {
   getLevelInfo: async function (clas, level) {
     return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
       .then(store => {
+        console.log(store, " the level info we got")
         const levels = JSON.parse(store)
         return levels[level - 1]
       })
@@ -99,5 +100,3 @@ const db = {
 }
 
 export default db
-
-db.storeClasses

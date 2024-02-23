@@ -14,7 +14,7 @@ export default function StorageTest({ navigation }) {
       .then(() => {
         setDisplayed('saved "Rabbit"')
       })
-      .catch(setError)
+      .catch(err => setError(JSON.stringify(err)))
   }
 
   const handleFetch = () => {
@@ -22,21 +22,28 @@ export default function StorageTest({ navigation }) {
       .then((data) => {
         setDisplayed(`Fetched ${data ? data : 'nothing'} from storage.`)
       })
-      .catch(setError)
+      .catch(err => setError(JSON.stringify(err)))
   }
 
   const handleDelete = () => {
     AsyncStorage.clear()
       .then(setDisplayed('Storage cleared.'))
-      .catch(setError)
+      .catch(err => setError(JSON.stringify(err)))
   }
 
   const handleClericSpell = () => {
     AsyncStorage.getItem('cleric-spells')
       .then((data) => {
-          setSpells(data ? JSON.parse(data).map(JSON.stringify) : ["Nothing here, boss"])
+        let toSet = []
+        data = JSON.parse(data) || []
+        for(let i = 0; i < 10; i ++){
+          const lvl = `lvl${i}`
+          console.log(data[lvl])
+          toSet.push(JSON.stringify(data[`lvl${i}`]))
+        }
+          setSpells(toSet ? toSet : ["Nothing here, boss"])
       })
-      .catch(setError)
+      .catch(err => console.log(err))
   }
 
   const handleCleric3 = () => {
@@ -44,7 +51,7 @@ export default function StorageTest({ navigation }) {
     .then(data => {
       setSpells(data ? [JSON.stringify(data)] : ["Nothing here, boss"])
     })
-    .catch(setError)
+    .catch(err => setError(JSON.stringify(err)))
   }
 
   handleSpell = () => {

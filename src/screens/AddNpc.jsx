@@ -96,6 +96,8 @@ export default function AddNpc() {
 
   const handleLevel = (e) => {
     //TODO: update spell info
+    db.getLevelInfo(form.clas, parseInt(e))
+    .then(console.log)
     setForm({ ...form, level: e })
   }
 
