@@ -28,14 +28,13 @@ const db = {
       .then(data => {
         cb('Storing classes...')
         const promises = data.map((clas) => (
-          //For each class, this creates an entry for the class, the spells for that class, and level info for that class.
+          //For each class, this creates an entry for the class, a spell list for that class, and level info for that class.
           Promise.all([
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
             api.fetchSpellsByClass(clas.index)
-              .then(classSpells => {
-                console.log(classSpells.data, " spells per class")
-                //AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.results))
-              })
+              .then(classSpells => (
+                AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.results))
+              ))
               .catch(err => console.log("error fetching class-specific spells: ", err)),
             api.fetchClassLevels(clas)
               .then(classLevels => (
@@ -100,3 +99,5 @@ const db = {
 }
 
 export default db
+
+db.storeClasses
