@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import NpcList from "../features/npcs/NpcList";
 import Button from "../components/Button";
+import Tally from "../components/Tally";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -32,6 +33,7 @@ export default function Launch({ navigation }) {
       <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
       <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
       <NpcList npcs={["Jim", "Bim", "Jimself"]} />
+      <Tally count={4}/>
     </View>
   )
 }

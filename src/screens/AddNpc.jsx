@@ -97,9 +97,9 @@ export default function AddNpc() {
 
   const handleClass = (e) => {
     db.getSpellcastingInfo(toIndex(e), parseInt(form.level))
-    .then(spellcastingInfo => {
-      parseSlots(spellcastingInfo, setSpellSlots)
-    })
+      .then(spellcastingInfo => {
+        parseSlots(spellcastingInfo, setSpellSlots)
+      })
     updateModifiers(e, null, null)
     db.getSpells(toIndex(e))
       .then(setSpells)
@@ -158,12 +158,16 @@ export default function AddNpc() {
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
+
       {spellSlots && spellSlots.map((slot, i) => (
-        <Text key={i}>{`Level ${i + 1} slots: ${slot}`}</Text>
+        <View>
+          <Text key={i}>{`Level ${i + 1} slots: ${slot}`}</Text>
+        </View>
       ))}
+      <Button text="Spells" />
 
       <Button text="Submit" onPress={handleSubmit} />
-    
+
 
     </View>
   )
