@@ -80,15 +80,15 @@ export default function AddNpc() {
 
   const handleRace = (e) => {
 
-    ///BUG: subraces not updating on race change!!!
-
     const race = races.filter(race => (race.name === e))[0]
     updateModifiers(null, e, race.subraces[0].name)
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
       setHasSubraces(true);
-      setForm({ ...form, race: e, subrace: race.subraces[0].name })
+      setForm({ ...form, race: e, subrace: race.subraces[0] })
     } else {
+      setHasSubraces(false)
+      setSubraces(race.subraces)
       setForm({ ...form, race: e, subrace: 'Normal' })
     }
   }
@@ -134,7 +134,7 @@ export default function AddNpc() {
     <View>
 
       <Text>{name}</Text>
-      <Text>{`${form.race}${form.subrace ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
+      <Text>{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
 
       <TextInput placeholder="Name" onChangeText={handleName} />
 
