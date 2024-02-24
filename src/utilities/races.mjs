@@ -27,7 +27,7 @@ export default [
     subraces: [
       {
         name: "High",
-        bunuses: {
+        bonuses: {
           dex: 2,
           int: 1
         }

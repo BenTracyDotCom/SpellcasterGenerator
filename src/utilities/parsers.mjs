@@ -1,0 +1,82 @@
+const parsers = {
+  parseSlots: (spellcastingInfo, cb) => {
+    const slots = []
+    const slotInfo = Object.keys(spellcastingInfo).filter(key => (parseInt(key.slice(-1))))
+    slotInfo.forEach(slot => {
+      slots[parseInt(slot.slice(-1)) - 1] = spellcastingInfo[slot]
+    })
+    cb(slots)
+  },
+
+  parseSpellInfo: (spellObj, level, modifier) => {
+    /*
+    { cantrips_known: num,
+      spell_slots_level_x: num,
+      spells_known?: num,  
+    }
+    */
+    const parsed = {}
+    if (spellObj.spells_known) {
+      parsed.spells_known = spellObj.spells_known
+    } else {
+      parsed.spells_known = parseInt(level) + parseInt(modifier)
+    }
+    parsed[0] = spellObj.cantrips_known
+    const keys = Object.keys(spellObj)
+    for (let i = 0; i < keys.length; i++) {
+      let num = parseInt(keys[i].slice(-1))
+      if (num) {
+        parsed[num] = spellObj[keys[i]]
+      }
+    }
+    return parsed
+  },
+
+  parseModifiers: (castingAbility, subrace) => {
+    
+    const modifiers = {
+      con: 14,
+      str: 12,
+      dex: 13,
+      wis: 0,
+      cha: 0,
+      int: 0
+    }
+
+    modifiers[castingAbility] = 15
+
+    Object.keys(subrace.bonuses).forEach(key => {
+      if (!parseInt(key)) {
+        modifiers[key] += parseInt(subrace.bonuses[key])
+      } else {
+        if (key === '2') {
+          //Variant human: +1 to spellcasting stat and CON
+          modifiers.castingModifier++
+          modifiers.con++
+        } else if (key === '1') {
+          //Half-elf: +1 to either spellcasting stat or CON
+          if (castingModifier === 'cha') {
+            modifiers.con++
+          } else {
+            modifiers.castingModifier++
+          }
+        }
+      }
+    })
+
+    Object.keys(modifiers).forEach(key => {
+      if (modifiers[key] > 10) {
+        modifiers[key] = Math.floor((modifiers[key] - 10) / 2)
+      }
+    })
+    return modifiers
+  },
+
+  toIndex: (str) => {
+    const formattedString = str.replace(/\s+/g, '-').toLowerCase();
+    return formattedString;
+  }
+
+}
+
+export default parsers

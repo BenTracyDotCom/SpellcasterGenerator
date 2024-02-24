@@ -3,15 +3,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import races from '../utilities/races.mjs';
-import toIndex from '../utilities/toIndex.mjs';
 import classNames from '../utilities/classNames.mjs';
 import Button from '../components/Button';
 import db from '../utilities/db.mjs';
-import parseSpellInfo from '../utilities/parseSpellInfo.mjs';
-import parseModifiers from '../utilities/parseModifiers.mjs';
-import parseSlots from '../utilities/parseSlots.mjs';
+import { default as p } from '../utilities/parsers.mjs';
 
-export default function AddNpc() {
+export default function AddNpc({ navigation }) {
 
   const [name, setName] = useState('New NPC')
   const [classes, setClasses] = useState([])
@@ -49,7 +46,7 @@ export default function AddNpc() {
           .then(setSpells)
         db.getSpellcastingInfo(loadedClasses[0].index, 1)
           .then(spellcastingInfo => {
-            parseSlots(spellcastingInfo, setSpellSlots)
+            p.parseSlots(spellcastingInfo, setSpellSlots)
           })
           .catch(setError)
         setForm({ ...form, clas: loadedClasses[0].name })
@@ -65,7 +62,7 @@ export default function AddNpc() {
     const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
     const expandedSubrace = races.find(raceObj => (raceObj.name === race))
       .subraces.find(subraceObj => (subraceObj.name === subrace))
-    const parsedModifiers = parseModifiers(castingAbility, expandedSubrace)
+    const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
     setForm({ ...form, modifiers: parsedModifiers })
   }
 
@@ -85,7 +82,7 @@ export default function AddNpc() {
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
       setHasSubraces(true);
-      setForm({ ...form, race: e, subrace: race.subraces[0] })
+      setForm({ ...form, race: e, subrace: race.subraces[0].name })
     } else {
       setHasSubraces(false)
       setSubraces(race.subraces)
@@ -99,22 +96,26 @@ export default function AddNpc() {
   }
 
   const handleClass = (e) => {
-    db.getSpellcastingInfo(toIndex(e), parseInt(form.level))
+    db.getSpellcastingInfo(p.toIndex(e), parseInt(form.level))
       .then(spellcastingInfo => {
-        parseSlots(spellcastingInfo, setSpellSlots)
+        p.parseSlots(spellcastingInfo, setSpellSlots)
       })
     updateModifiers(e, null, null)
-    db.getSpells(toIndex(e))
+    db.getSpells(p.toIndex(e))
       .then(setSpells)
     setForm({ ...form, clas: e })
   }
 
   const handleLevel = (e) => {
-    db.getSpellcastingInfo(toIndex(form.clas), parseInt(e))
+    db.getSpellcastingInfo(p.toIndex(form.clas), parseInt(e))
       .then(spellcastingInfo => {
-        parseSlots(spellcastingInfo, setSpellSlots)
+        p.parseSlots(spellcastingInfo, setSpellSlots)
       })
     setForm({ ...form, level: e })
+  }
+
+  const handleSpells = (e) => {
+    navigation.navigate("Spells")
   }
 
   //TODO: Display pertinent stat blocks once race & class are selected
@@ -131,7 +132,7 @@ export default function AddNpc() {
   }
 
   return (
-    <View>
+    <View className="">
 
       <Text>{name}</Text>
       <Text>{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
@@ -163,11 +164,11 @@ export default function AddNpc() {
       </Picker>
 
       {spellSlots && spellSlots.map((slot, i) => (
-        <View>
-          <Text key={i}>{`Level ${i + 1} slots: ${slot}`}</Text>
+        <View key={i}>
+          <Text>{`Level ${i + 1} slots: ${slot}`}</Text>
         </View>
       ))}
-      <Button text="Spells" />
+      <Button text="Spells" onPress={handleSpells}/>
 
       <Button text="Submit" onPress={handleSubmit} />
 

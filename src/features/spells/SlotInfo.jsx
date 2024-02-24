@@ -3,7 +3,7 @@ import { useState } from "react";
 import Tally from "../../components/Tally";
 import Button from "../../components/Button";
 
-export default function SlotInfo({ level, maxSlots }) {
+export default function SlotInfo({ level, maxSlots, slotIncrementer }) {
 
   level = level || 1
 
@@ -11,12 +11,12 @@ export default function SlotInfo({ level, maxSlots }) {
   const [count, setCount] = useState(0)
 
   const handleIncrement = () => {
-    if(count < maxSlots){
+    if (count < maxSlots) {
       setCount(count + 1)
     }
   }
   const handleDecrement = () => {
-    if(count > 0){
+    if (count > 0) {
       setCount(count - 1)
     }
   }
@@ -26,12 +26,14 @@ export default function SlotInfo({ level, maxSlots }) {
       <View className="border-2 rounded-full px-2">
         <Text>{level}</Text>
       </View>
-      <Text>{`Total: ${maxSlots}`}</Text>
-      <Tally count={count} max={maxSlots} />
-      <View className="flex flex-row w-min">
-        <Button text="+" onPress={handleIncrement} />
-        <Button text="-" onPress={handleDecrement} />
-      </View>
+      {slotIncrementer && <View>
+        <Text>{`Total: ${maxSlots}`}</Text>
+        <Tally count={count} max={maxSlots} />
+        <View className="flex flex-row w-min">
+          <Button text="+" onPress={handleIncrement} />
+          <Button text="-" onPress={handleDecrement} />
+        </View>
+      </View>}
     </View>
   )
 
