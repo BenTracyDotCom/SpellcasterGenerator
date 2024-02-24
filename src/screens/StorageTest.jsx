@@ -71,7 +71,7 @@ export default function StorageTest({ navigation }) {
       </Text>
       <Button text="Save 'Rabbit'" onPress={handleSave} />
       <Button text="Fetch 'Rabbit'" onPress={handleFetch} />
-      <Button text="Clear Storage" onPress={handleDelete} />
+      {/* <Button text="Clear Storage" onPress={handleDelete} /> */}
       <Button text="Fetch Cleric Spells" onPress={handleClericSpell} />
       <Button text="Cleric 3 Info" onPress={handleCleric3} />
       <Button text="Loading screen" onPress={() => navigation.navigate("Loading")} />

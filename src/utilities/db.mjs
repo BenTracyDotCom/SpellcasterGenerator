@@ -73,7 +73,6 @@ const db = {
   getLevelInfo: async function (clas, level) {
     return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
       .then(store => {
-        console.log(store, " the level info we got")
         const levels = JSON.parse(store)
         return levels[level - 1]
       })
@@ -94,8 +93,15 @@ const db = {
       })
   },
 
+  getSpells: async function (clas) {
+    return AsyncStorage.getItem(clas.index ? clas.index + '-spells' : clas + '-spells')
+    .then((spells) => (
+      JSON.parse(spells)
+    ))
+  },
+
   getClass: async function (clas) {
-    return AsyncStorage.getItem(clas)
+    return AsyncStorage.getItem(clas.index ? clas.index : clas)
   }
 }
 

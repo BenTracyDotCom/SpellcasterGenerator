@@ -9,6 +9,7 @@ import Button from '../components/Button';
 import db from '../utilities/db.mjs';
 import parseSpellInfo from '../utilities/parseSpellInfo.mjs';
 import parseModifiers from '../utilities/parseModifiers.mjs';
+import parseSlots from '../utilities/parseSlots.mjs';
 
 export default function AddNpc() {
 
@@ -19,6 +20,8 @@ export default function AddNpc() {
   const [subrace, setSubrace] = useState(races[0].subraces[0])
   const [subraces, setSubraces] = useState(races[0].subraces)
   const [hasSubraces, setHasSubraces] = useState(true)
+  const [spells, setSpells] = useState({})
+  const [spellSlots, setSpellSlots] = useState([])
   const [error, setError] = useState('')
 
   const [form, setForm] = useState({
@@ -34,14 +37,23 @@ export default function AddNpc() {
 
 
   useEffect(() => {
+
+    //TODO: set spells and cantrips known. It'll help for later.
+
     AsyncStorage.multiGet(classNames)
       .then(data => {
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         setClasses(loadedClasses)
         setClas(loadedClasses[0])
+        db.getSpells(loadedClasses[0])
+          .then(setSpells)
+        db.getSpellcastingInfo(loadedClasses[0].index, 1)
+          .then(spellcastingInfo => {
+            parseSlots(spellcastingInfo, setSpellSlots)
+          })
+          .catch(setError)
         setForm({ ...form, clas: loadedClasses[0].name })
       })
-      .catch(setError)
   }, [])
 
   const updateModifiers = (clas, race, subrace) => {
@@ -57,9 +69,6 @@ export default function AddNpc() {
     setForm({ ...form, modifiers: parsedModifiers })
   }
 
-  //Refactor to prevent manually re-finding an expanded race, subrace, class, or modifiers in every handler function, 
-
-
   const handleName = (e) => {
     if (e) {
       setName(e)
@@ -71,49 +80,41 @@ export default function AddNpc() {
 
   const handleRace = (e) => {
     const race = races.filter(race => (race.name === e))[0]
+    updateModifiers(null, e, race.subraces[0].name)
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
       setHasSubraces(true);
       setForm({ ...form, race: e, subrace: race.subraces[0].name })
     } else {
-      const expandedClass = classes.find(clas => (clas.index === form.clas))
-      setHasSubraces(false)
-      const subrace = race.subraces[0]
-      updateModifiers(null, e, null)
       setForm({ ...form, race: e, subrace: 'Normal' })
     }
   }
 
   const handleSubrace = (e) => {
-    updateModifiers(null, null, e)
+    updateModifiers(null, form.race, e)
     setForm({ ...form, subrace: e })
   }
 
   const handleClass = (e) => {
+    db.getSpellcastingInfo(toIndex(e), parseInt(form.level))
+    .then(spellcastingInfo => {
+      parseSlots(spellcastingInfo, setSpellSlots)
+    })
     updateModifiers(e, null, null)
+    db.getSpells(toIndex(e))
+      .then(setSpells)
     setForm({ ...form, clas: e })
   }
 
   const handleLevel = (e) => {
-    //TODO: update spell info
-    db.getLevelInfo(form.clas, parseInt(e))
-    .then(console.log)
+    db.getSpellcastingInfo(toIndex(form.clas), parseInt(e))
+      .then(spellcastingInfo => {
+        parseSlots(spellcastingInfo, setSpellSlots)
+      })
     setForm({ ...form, level: e })
   }
 
   //TODO: Display pertinent stat blocks once race & class are selected
-
-  const handleSpellInfo = () => {
-    db.getSpellcastingInfo(form.clas, form.level)
-      .then(info => {
-        if (!info.spells_known) {
-          //Parse spell info, but pass in (spellObj, level, modifier)
-        } else {
-          parseSpellInfo(info)
-        }
-        //TODO: Parse and display spell slots and prepared spells per level
-      })
-  }
 
   const handleSubmit = () => {
     //TODO:
@@ -146,21 +147,23 @@ export default function AddNpc() {
         ))}
       </Picker>}
 
-      {classes && <Picker selectedValue={clas} onValueChange={handleClass}>
+      {classes && <Picker selectedValue={form.clas} onValueChange={handleClass}>
         {classes.map((clas, i) => (
           <Picker.Item label={clas.name} value={clas.name} key={i} />
         ))}
       </Picker>}
-
 
       <Picker selectedValue={form.level} onValueChange={handleLevel}>
         {Array(20).fill(1).map((val, i) => (
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
-      <Button text="Run the spell info finder" onPress={handleSpellInfo} />
+      {spellSlots && spellSlots.map((slot, i) => (
+        <Text key={i}>{`Level ${i + 1} slots: ${slot}`}</Text>
+      ))}
 
       <Button text="Submit" onPress={handleSubmit} />
+    
 
     </View>
   )
