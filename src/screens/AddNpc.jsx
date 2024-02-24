@@ -79,6 +79,9 @@ export default function AddNpc() {
   }
 
   const handleRace = (e) => {
+
+    ///BUG: subraces not updating on race change!!!
+
     const race = races.filter(race => (race.name === e))[0]
     updateModifiers(null, e, race.subraces[0].name)
     if (race.subraces.length > 1) {
