@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
 
-export default function Spell() {
+export default function Spells({ navigation }) {
   return (
     <View>
-      <Text>Spell info!</Text>
+      <Text>Spells!</Text>
     </View>
   )
 }
