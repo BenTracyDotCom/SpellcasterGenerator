@@ -8,7 +8,12 @@ const parsers = {
     cb(slots)
   },
 
-  parseSpellInfo: (spellObj, level, modifier) => {
+  parseSpellInfo: (spellObj, level) => {
+
+    const modifier = 
+    level < 4 ? 3 : 
+    //Assuming bumping up ability score from 16 to 18 at level 4, 19 at 8, 20 at 12
+    level < 12 >= 4 ? 4 : 5
     /*
     { cantrips_known: num,
       spell_slots_level_x: num,
@@ -32,7 +37,7 @@ const parsers = {
     return parsed
   },
 
-  parseModifiers: (castingAbility, subrace) => {
+  parseModifiers: (castingAbility, subrace, level) => {
 
     const modifiers = {
       con: 14,
@@ -69,6 +74,8 @@ const parsers = {
         modifiers[key] = Math.floor((modifiers[key] - 10) / 2)
       }
     })
+    modifiers[castingAbility] =  level < 4 ? 3 : level < 12 >= 4 ? 4 : 5
+    modifiers.con += (level > 7 && level < 12 ? 1 : level >= 12 ? 2 : 0 )
     return modifiers
   },
 
@@ -81,14 +88,19 @@ const parsers = {
     const parsed = [];
 
     Object.keys(spells).forEach(key => {
-      
-      if(parseInt(key.slice(-1)) !== NaN){
-        console.log(key.slice(-1), "s/b numbers")
+
+      if (parseInt(key.slice(-1)) !== NaN) {
         parsed[parseInt(key.slice(-1))] = spells[key]
       }
     })
-    
     return parsed
+  },
+
+  distributeSpells: (spells, slots, prepared) => {
+    //Pick 2 for every level of slots, put remainder into level 1
+    console.log(typeof spells, ' spell data type')
+    console.log(typeof slots, ' slot info data type')
+    console.log(typeof prepared, ' prepared data type')
   }
 
 }

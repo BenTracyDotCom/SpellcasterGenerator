@@ -8,8 +8,7 @@ export default function Spellbook({ route, navigation }) {
   return (
 
     <View>
-      <Text>{JSON.stringify(spells[1])}</Text>
-      <SpellByLevel />
+      {spells.map((spell, i) => (<SpellByLevel spells={spells} level={i} key={i} />))}
     </View>
   )
 
