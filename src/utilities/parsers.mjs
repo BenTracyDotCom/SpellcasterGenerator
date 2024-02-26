@@ -33,7 +33,7 @@ const parsers = {
   },
 
   parseModifiers: (castingAbility, subrace) => {
-    
+
     const modifiers = {
       con: 14,
       str: 12,
@@ -75,6 +75,22 @@ const parsers = {
   toIndex: (str) => {
     const formattedString = str.replace(/\s+/g, '-').toLowerCase();
     return formattedString;
+  },
+
+  parseSpellsIntoSlots: (spells) => {
+    const parsed = [];
+
+    Object.keys(spells).forEach(key => {
+
+    //BUG: doesn't handle 0
+
+      if(parseInt(key.slice(-1))){
+        console.log(key.slice(-1), "s/b numbers")
+        parsed[parseInt(key.slice(-1))] = spells[key]
+      }
+    })
+    
+    return parsed
   }
 
 }

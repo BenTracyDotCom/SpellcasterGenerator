@@ -102,7 +102,10 @@ export default function AddNpc({ navigation }) {
       })
     updateModifiers(e, null, null)
     db.getSpells(p.toIndex(e))
-      .then(setSpells)
+      .then((data) => {
+        //console.log(p.parseSpellsIntoSlots(data), " s/b array of spells in order of level")
+        setSpells(p.parseSpellsIntoSlots(data))
+      })
     setForm({ ...form, clas: e })
   }
 

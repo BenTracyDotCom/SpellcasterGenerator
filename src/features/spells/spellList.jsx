@@ -6,7 +6,7 @@ export default function spellList({ spells, navigation }) {
   return (
     <View>
       {spells.map((spell, i) => (
-        <SpellRow spell={spell} key="i" />
+        <SpellRow spell={spell} key={i} />
       )
       )}
     </View>
