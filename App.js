@@ -10,6 +10,7 @@ import Loading from './src/screens/Loading';
 import AddNpc from './src/screens/AddNpc';
 import Spells from './src/screens/Spells';
 import Spell from './src/screens/Spell';
+import Spellbook from './src/screens/Spellbook';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,10 @@ export default function App() {
         <Stack.Screen
         name="Spells"
         component={Spells}
+        />
+        <Stack.Screen
+        name="Spellbook"
+        component={Spellbook}
         />
         <Stack.Screen
         name="Add NPC"

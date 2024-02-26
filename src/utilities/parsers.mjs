@@ -81,10 +81,8 @@ const parsers = {
     const parsed = [];
 
     Object.keys(spells).forEach(key => {
-
-    //BUG: doesn't handle 0
-
-      if(parseInt(key.slice(-1))){
+      
+      if(parseInt(key.slice(-1)) !== NaN){
         console.log(key.slice(-1), "s/b numbers")
         parsed[parseInt(key.slice(-1))] = spells[key]
       }

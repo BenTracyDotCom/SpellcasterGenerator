@@ -42,10 +42,14 @@ export default function AddNpc({ navigation }) {
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         setClasses(loadedClasses)
         setClas(loadedClasses[0])
-        db.getSpells(loadedClasses[0])
-          .then(setSpells)
+
+        db.getSpells(loadedClasses[0].index)
+          .then((data) => {
+            setSpells(p.parseSpellsIntoSlots(data))
+          })
         db.getSpellcastingInfo(loadedClasses[0].index, 1)
           .then(spellcastingInfo => {
+
             p.parseSlots(spellcastingInfo, setSpellSlots)
           })
           .catch(setError)
@@ -103,7 +107,6 @@ export default function AddNpc({ navigation }) {
     updateModifiers(e, null, null)
     db.getSpells(p.toIndex(e))
       .then((data) => {
-        //console.log(p.parseSpellsIntoSlots(data), " s/b array of spells in order of level")
         setSpells(p.parseSpellsIntoSlots(data))
       })
     setForm({ ...form, clas: e })
@@ -118,7 +121,10 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleSpells = (e) => {
-    navigation.navigate("Spells")
+    navigation.navigate("Spellbook", {
+      spells: spells,
+      spellSlots: spellSlots
+    })
   }
 
   //TODO: Display pertinent stat blocks once race & class are selected
@@ -171,7 +177,7 @@ export default function AddNpc({ navigation }) {
           <Text>{`Level ${i + 1} slots: ${slot}`}</Text>
         </View>
       ))}
-      <Button text="Spells" onPress={handleSpells}/>
+      <Button text="Spells" onPress={handleSpells} />
 
       <Button text="Submit" onPress={handleSubmit} />
 
