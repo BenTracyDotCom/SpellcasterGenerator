@@ -14,12 +14,14 @@ export default function AddNpc({ navigation }) {
   const [classes, setClasses] = useState([])
   const [clas, setClas] = useState({})
   const [race, setRace] = useState(races[0])
+  const [spellsKnown, setSpellsKnown] = useState()
   const [subrace, setSubrace] = useState(races[0].subraces[0])
   const [subraces, setSubraces] = useState(races[0].subraces)
   const [hasSubraces, setHasSubraces] = useState(true)
   const [spells, setSpells] = useState({})
   const [spellSlots, setSpellSlots] = useState([])
   const [error, setError] = useState('')
+  const [modifiers, setModifiers] = useState({})
 
   const [form, setForm] = useState({
     name: '',
@@ -29,7 +31,9 @@ export default function AddNpc({ navigation }) {
     level: '1',
     spellcastingAbility: 'wis',
     modifiers: {},
-    spells: {}
+    spellsKnown: {},
+    spells: [],
+    prepared: 4
   })
 
 
@@ -42,14 +46,14 @@ export default function AddNpc({ navigation }) {
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         setClasses(loadedClasses)
         setClas(loadedClasses[0])
-
         db.getSpells(loadedClasses[0].index)
           .then((data) => {
+            //Sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
             setSpells(p.parseSpellsIntoSlots(data))
           })
         db.getSpellcastingInfo(loadedClasses[0].index, 1)
           .then(spellcastingInfo => {
-
+            setSpellsKnown(p.parseSpellInfo(spellcastingInfo, 1))
             p.parseSlots(spellcastingInfo, setSpellSlots)
           })
           .catch(setError)
@@ -57,17 +61,48 @@ export default function AddNpc({ navigation }) {
       })
   }, [])
 
-  const updateModifiers = (clas, race, subrace) => {
+  //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
+  const updateModifiers = (clas, race, subrace, level) => {
     clas = clas || form.clas
     race = race || form.race
     subrace = subrace || form.subrace
+    level = level || form.level
 
-    const expandedClass = classes.find(entry => (entry.name === clas))
-    const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
-    const expandedSubrace = races.find(raceObj => (raceObj.name === race))
-      .subraces.find(subraceObj => (subraceObj.name === subrace))
-    const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
-    setForm({ ...form, modifiers: parsedModifiers })
+    //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
+    db.getSpells(p.toIndex(clas)).then((data) => {
+      setSpells(p.parseSpellsIntoSlots(data));
+    })
+
+    //Gets level-specific spellcasting info for this class
+    db.getSpellcastingInfo(p.toIndex(clas), parseInt(level))
+      .then(spellcastingInfo => {
+        // { cantrips_known: num,
+        //   spell_slots_level_x: num,
+        //   ...
+        //   spells_known?: num,
+        //   (added by function if not available)    
+        // }
+
+        //Adds spells_known if dependent on level + modifier
+        const spellsKnown = p.parseSpellsKnown(spellcastingInfo, level)
+        setSpellsKnown(spellsKnown)
+
+        //Returns an array with indexes corresponding to spell levels:
+        //[3, 3, 2] = 3 level 1 slots, 3 level 2 slots, 2 level 3...
+        p.parseSlots(spellcastingInfo, setSpellSlots)
+        const expandedClass = classes.find(entry => (entry.name === clas))
+
+        const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
+
+        const expandedSubrace = races.find(raceObj => (raceObj.name === race))
+          .subraces.find(subraceObj => (subraceObj.name === subrace))
+
+        const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
+
+        //Update modifiers
+        setModifiers(parsedModifiers)
+      })
+
   }
 
   const handleName = (e) => {
@@ -83,55 +118,48 @@ export default function AddNpc({ navigation }) {
 
     const race = races.filter(race => (race.name === e))[0]
     updateModifiers(null, e, race.subraces[0].name)
+    let subrace
     if (race.subraces.length > 1) {
       setSubraces(race.subraces)
       setHasSubraces(true);
-      setForm({ ...form, race: e, subrace: race.subraces[0].name })
+      subrace = race.subraces[0].name
+      setForm({ ...form, race: e, subrace: subrace })
     } else {
       setHasSubraces(false)
       setSubraces(race.subraces)
-      setForm({ ...form, race: e, subrace: 'Normal' })
+      subrace = "Normal"
+      setForm({ ...form, race: e, subrace: subrace })
     }
+    updateModifiers(null, e, subrace)
   }
 
   const handleSubrace = (e) => {
-    updateModifiers(null, form.race, e)
     setForm({ ...form, subrace: e })
+    updateModifiers(null, form.race, e)
   }
 
   const handleClass = (e) => {
-    db.getSpellcastingInfo(p.toIndex(e), parseInt(form.level))
-      .then(spellcastingInfo => {
-        p.parseSlots(spellcastingInfo, setSpellSlots)
-      })
-    updateModifiers(e, null, null)
-    db.getSpells(p.toIndex(e))
-      .then((data) => {
-        setSpells(p.parseSpellsIntoSlots(data))
-      })
     setForm({ ...form, clas: e })
+    updateModifiers(e)
   }
 
   const handleLevel = (e) => {
-    db.getSpellcastingInfo(p.toIndex(form.clas), parseInt(e))
-      .then(spellcastingInfo => {
-        p.parseSlots(spellcastingInfo, setSpellSlots)
-      })
     setForm({ ...form, level: e })
+    updateModifiers(null, null, null, e)
   }
 
   const handleSpells = (e) => {
     navigation.navigate("Spellbook", {
       spells: spells,
-      spellSlots: spellSlots
+      spellSlots: spellSlots,
+      spellsKnown: spellsKnown
     })
   }
 
-  //TODO: Display pertinent stat blocks once race & class are selected
+  //TODO: Display pertinent stat blocks once race & class are selected: Attack bonus, save DC, CON save, other saves ? 
 
   const handleSubmit = () => {
     //TODO:
-    //Expand all of the spells into their full forms
     //check for an array of npc's
     //if there is one,
     //parse it, push the new NPC into it, stringify & store it

@@ -1,15 +1,14 @@
 const parsers = {
   parseSlots: (spellcastingInfo, cb) => {
     const slots = []
-    const slotInfo = Object.keys(spellcastingInfo).filter(key => (parseInt(key.slice(-1))))
+    const slotInfo = Object.keys(spellcastingInfo).filter(key => (parseInt(key.slice(-1)) !== NaN))
     slotInfo.forEach(slot => {
-      slots[parseInt(slot.slice(-1)) - 1] = spellcastingInfo[slot]
+      slots[parseInt(slot.slice(-1))] = spellcastingInfo[slot]
     })
     cb(slots)
   },
 
-  parseSpellInfo: (spellObj, level) => {
-
+  parseSpellsKnown: (spellObj, level) => {
     const modifier = 
     level < 4 ? 3 : 
     //Assuming bumping up ability score from 16 to 18 at level 4, 19 at 8, 20 at 12
@@ -17,24 +16,14 @@ const parsers = {
     /*
     { cantrips_known: num,
       spell_slots_level_x: num,
+      ...
       spells_known?: num,  
     }
     */
-    const parsed = {}
-    if (spellObj.spells_known) {
-      parsed.spells_known = spellObj.spells_known
-    } else {
-      parsed.spells_known = parseInt(level) + parseInt(modifier)
+    if (!spellObj.spells_known) {
+      spellObj.spells_known = parseInt(level) + parseInt(modifier)
     }
-    parsed[0] = spellObj.cantrips_known
-    const keys = Object.keys(spellObj)
-    for (let i = 0; i < keys.length; i++) {
-      let num = parseInt(keys[i].slice(-1))
-      if (num) {
-        parsed[num] = spellObj[keys[i]]
-      }
-    }
-    return parsed
+    return spellObj
   },
 
   parseModifiers: (castingAbility, subrace, level) => {
@@ -89,7 +78,8 @@ const parsers = {
 
     Object.keys(spells).forEach(key => {
 
-      if (parseInt(key.slice(-1)) !== NaN) {
+      if (parseInt(key.slice(-1)) !== 
+      NaN) {
         parsed[parseInt(key.slice(-1))] = spells[key]
       }
     })
