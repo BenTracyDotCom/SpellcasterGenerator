@@ -95,12 +95,9 @@ const parsers = {
     const toReturn = []
     for(let i = 0; i < prepared; i ++){
       const indexToRemove = Math.floor(Math.random() * (spells.length - i))
-      //console.log(indexToRemove, "index")
-      let randomSpell = mutableSpells.splice(indexToRemove, 1)
+      let randomSpell = mutableSpells.splice(indexToRemove, 1)[0]
       toReturn.push(randomSpell)
-      //console.log(i, ' times thru the loop')
     }
-    //console.log(toReturn, ` ${prepared} random spells`)
     return toReturn
   }
 

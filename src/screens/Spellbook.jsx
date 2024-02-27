@@ -1,17 +1,17 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import SpellByLevel from "../features/spellbook/SpellByLevel";
+import { useState, useEffect } from "react";
+import SpellbookTile from "../features/spellbook/SpellbookTile";
 import { default as p } from "../utilities/parsers.mjs"
+import { default as db } from "../utilities/db.mjs"
 
 export default function Spellbook({ route, navigation }) {
 
   const { spells, spellSlots, spellsKnown } = route.params
-  //console.log(spellsKnown, ' what spellbook is getting from addNPC')
-
 
   return (
 
     <View>
-      {spells.map((spell, i) => (<SpellByLevel spells={spells} spellsKnown={spellsKnown} level={i} key={i} />))}
+      {spells.length && spells.map((spells, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation}/>))}
     </View>
   )
 
