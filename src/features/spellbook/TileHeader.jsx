@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
-export default function TileHeader({ level, max, setMax, reShuffle }) {
+export default function TileHeader({ level, max, setMax, reShuffle, spellSlots }) {
 
-  const levelInfo = level > 0 ? ` Level ${level} Spells` : 'Cantrips'
+  const levelInfo = level > 0 ? ` Level ${level} Spells ${spellSlots ? `(${spellSlots} slots)` : ''}` : 'Cantrips'
 
   const handleShuffle = () => {
     reShuffle()

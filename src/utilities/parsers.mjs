@@ -4,7 +4,6 @@ const parsers = {
     const slotInfo = Object.keys(spellcastingInfo).filter(key => (parseInt(key.slice(-1)) !== NaN))
     slotInfo.forEach(slot => {
       slots[parseInt(slot.slice(-1))] = spellcastingInfo[slot]
-      //console.log(slots,  ` just set to ${slot}`)
     })
     cb(slots)
   },
@@ -88,10 +87,6 @@ const parsers = {
 
   distributeSpells: (spells, prepared) => {
     const mutableSpells = spells.slice(0)
-    //Pick 2 for every level of slots, put remainder into level 1
-    //console.log(mutableSpells, ' spells')
-    //console.log(typeof prepared, ' prepared data type')
-    //console.log(prepared, 's/b 2')
     const toReturn = []
     for(let i = 0; i < prepared; i ++){
       const indexToRemove = Math.floor(Math.random() * (spells.length - i))

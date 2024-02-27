@@ -38,7 +38,6 @@ export default function StorageTest({ navigation }) {
         data = JSON.parse(data) || []
         for(let i = 0; i < 10; i ++){
           const lvl = `lvl${i}`
-          console.log(data[lvl])
           toSet.push(JSON.stringify(data[`lvl${i}`]))
         }
           setSpells(toSet ? toSet : ["Nothing here, boss"])
@@ -71,7 +70,7 @@ export default function StorageTest({ navigation }) {
       </Text>
       <Button text="Save 'Rabbit'" onPress={handleSave} />
       <Button text="Fetch 'Rabbit'" onPress={handleFetch} />
-      {/* <Button text="Clear Storage" onPress={handleDelete} /> */}
+      <Button text="Clear Storage" onPress={handleDelete} />
       <Button text="Fetch Cleric Spells" onPress={handleClericSpell} />
       <Button text="Cleric 3 Info" onPress={handleCleric3} />
       <Button text="Loading screen" onPress={() => navigation.navigate("Loading")} />

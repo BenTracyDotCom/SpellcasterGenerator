@@ -199,7 +199,7 @@ export default function AddNpc({ navigation }) {
 
       {spellSlots ? spellSlots.map((slot, i) => (
         <View key={i}>
-          <Text>{`Level ${i + 1} slots: ${slot}`}</Text>
+          <Text>{`Level ${i} slots: ${slot}`}</Text>
         </View>
       )) : null}
 

@@ -6,7 +6,7 @@ import TileHeader from "./TileHeader";
 import ClickableSpell from "../../components/ClickableSpell";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels }) {
+export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells }) {
 
   //TODO: decrement remaining spells once they're assigned
 
@@ -25,8 +25,15 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
       .then(expandedSpells => {
         setRandomSpells(p.distributeSpells(expandedSpells, level === 0 ? spellsKnown.cantrips_known : max))
         setAllSpells(expandedSpells)
+
       })
   }, [max])
+
+    useEffect(() => {
+      const spellsInBag = [...npcSpells]
+      spellsInBag[level] = randomSpells
+      setNpcSpells(spellsInBag)
+    }, [randomSpells])
 
   const reShuffle = () => {
     setRandomSpells(p.distributeSpells(allSpells, level === 0 ? spellsKnown.cantrips_known : max))
@@ -34,7 +41,7 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
 
   return (
     <View>
-      <TileHeader level={level} max={max} setMax={setMax} reShuffle={reShuffle} />
+      <TileHeader level={level} max={max} setMax={setMax} spellSlots={spellSlots[level]} reShuffle={reShuffle} />
       {randomSpells.length ? randomSpells.map((spell, i) => (
         <ClickableSpell navigation={navigation} spell={spell} key={i}/>
       )) : null}
