@@ -144,10 +144,12 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleSpells = (e) => {
+    // Navigate to "Spellbook" page, where we'll complete entry
     navigation.navigate("Spellbook", {
       spells: spells,
       spellSlots: spellSlots,
-      spellsKnown: spellsKnown
+      spellsKnown: spellsKnown,
+      npc: {...form, modifiers: modifiers}
     })
   }
 
@@ -202,8 +204,6 @@ export default function AddNpc({ navigation }) {
       )) : null}
 
       <Button text="Spells" onPress={handleSpells} />
-
-      <Button text="Submit" onPress={handleSubmit} />
 
 
     </View>

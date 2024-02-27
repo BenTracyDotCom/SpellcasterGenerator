@@ -3,9 +3,12 @@ import { useState, useEffect } from "react";
 import { default as p } from "../../utilities/parsers.mjs";
 import { default as db } from "../../utilities/db.mjs"
 import TileHeader from "./TileHeader";
+import ClickableSpell from "../../components/ClickableSpell";
 //import SpellRow from "../spells/SpellRow";
 
 export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels }) {
+
+  //TODO: decrement remaining spells once they're assigned
 
   const [randomSpells, setRandomSpells] = useState([])
   const [allSpells, setAllSpells] = useState([])
@@ -33,7 +36,7 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
     <View>
       <TileHeader level={level} max={max} setMax={setMax} reShuffle={reShuffle} />
       {randomSpells.length ? randomSpells.map((spell, i) => (
-        <Text key={i}>{spell.name}</Text>
+        <ClickableSpell navigation={navigation} spell={spell} key={i}/>
       )) : null}
 
     </View>

@@ -38,6 +38,7 @@ export default function App() {
         <Stack.Screen
         name="Spell"
         component={Spell}
+        options={({ route }) => ({ title: route.params.title })}
         />
         <Stack.Screen
         name="Spells"
