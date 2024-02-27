@@ -44,22 +44,6 @@ export default function AddNpc({ navigation }) {
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         setClasses(loadedClasses)
         setClas(loadedClasses[0])
-        // db.getSpells(loadedClasses[0].index)
-        //   .then((data) => {
-        //     //Sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
-        //     setSpells(p.parseSpellsIntoSlots(data))
-        //   })
-        //   .catch(err => {
-        //     console.log("Error fetching spells: ", err)
-        //   })
-        // db.getSpellcastingInfo(loadedClasses[0].index, 1)
-        //   .then(spellcastingInfo => {
-        //     setSpellsKnown(p.parseSpellInfo(spellcastingInfo, 1))
-        //     p.parseSlots(spellcastingInfo, setSpellSlots)
-        //   })
-          // .catch(err => {
-          //   console.log('Error in initial load: ', err)
-          // })
         setForm({ ...form, clas: loadedClasses[0].name })
         updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
       })
@@ -97,7 +81,6 @@ export default function AddNpc({ navigation }) {
         //Returns an array with indexes corresponding to spell levels:
         //[3, 3, 2] = 3 level 1 slots, 3 level 2 slots, 2 level 3...
         p.parseSlots(spellcastingInfo, setSpellSlots)
-        //console.log(clas, "what we're searching classes.find for")
         const expandedClass = passedClasses.find(entry => (entry.name))
 
         const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
@@ -111,7 +94,6 @@ export default function AddNpc({ navigation }) {
         //Update modifiers
         setModifiers(parsedModifiers)
       })
-      //I know, I know
       .catch(err => {
         console.log("Error updating modifiers: ", err)
       })
@@ -195,17 +177,17 @@ export default function AddNpc({ navigation }) {
         ))}
       </Picker>
 
-      {hasSubraces && <Picker selectedValue={form.subrace} onValueChange={handleSubrace}>
+      {hasSubraces ? <Picker selectedValue={form.subrace} onValueChange={handleSubrace}>
         {subraces.map(subrace => (
           <Picker.Item label={subrace.name} value={subrace.name} key={subrace.name} />
         ))}
-      </Picker>}
+      </Picker> : null}
 
-      {classes && <Picker selectedValue={form.clas} onValueChange={handleClass}>
+      {classes ? <Picker selectedValue={form.clas} onValueChange={handleClass}>
         {classes.map((clas, i) => (
           <Picker.Item label={clas.name} value={clas.name} key={i} />
         ))}
-      </Picker>}
+      </Picker> : null}
 
       <Picker selectedValue={form.level} onValueChange={handleLevel}>
         {Array(20).fill(1).map((val, i) => (
@@ -213,11 +195,11 @@ export default function AddNpc({ navigation }) {
         ))}
       </Picker>
 
-      {spellSlots && spellSlots.map((slot, i) => (
+      {spellSlots ? spellSlots.map((slot, i) => (
         <View key={i}>
           <Text>{`Level ${i + 1} slots: ${slot}`}</Text>
         </View>
-      ))}
+      )) : null}
 
       <Button text="Spells" onPress={handleSpells} />
 

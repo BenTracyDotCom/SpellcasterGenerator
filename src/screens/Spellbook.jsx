@@ -11,7 +11,7 @@ export default function Spellbook({ route, navigation }) {
   return (
 
     <View>
-      {spells.length && spells.map((spells, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation}/>))}
+      {spells.length ? spells.map((spells, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation}/>)) : null}
     </View>
   )
 

@@ -7,9 +7,9 @@ export default function NpcList({ npcs, navigation }) {
 
   return (
     <View className="text-slate-500">
-      {npcs && npcs.map((npc, i) => (
+      {npcs ? npcs.map((npc, i) => (
         <Button text={npc} key={i} />
-      ))}
+      )) : null }
     </View>
   )
 }

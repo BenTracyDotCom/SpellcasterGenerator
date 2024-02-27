@@ -75,13 +75,13 @@ export default function StorageTest({ navigation }) {
       <Button text="Fetch Cleric Spells" onPress={handleClericSpell} />
       <Button text="Cleric 3 Info" onPress={handleCleric3} />
       <Button text="Loading screen" onPress={() => navigation.navigate("Loading")} />
-      {spells && spells.map((spell, i) => (
+      {spells ? spells.map((spell, i) => (
         <View key={i}>
           <TouchableOpacity onPress={() => { }}>
             <Text>{spell}</Text>
           </TouchableOpacity>
         </View>
-      ))}
+      )) : null}
     </View>
   )
 }
