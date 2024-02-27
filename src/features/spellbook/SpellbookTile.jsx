@@ -5,13 +5,16 @@ import { default as db } from "../../utilities/db.mjs"
 import TileHeader from "./TileHeader";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, navigation }) {
+export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels }) {
 
   const [randomSpells, setRandomSpells] = useState([])
   const [allSpells, setAllSpells] = useState([])
-  const [max, setMax] = useState(level === 0 ? spells.length : 2)
-
-  useEffect(() => {
+  const [max, setMax] = useState(
+    level === 0 ? spells.length :
+    level === 1 ? remaining - (relevantLevels.length - 1 * 2)
+    : 2)
+  
+    useEffect(() => {
     const promises = spells.map(spell => (
       db.getSpell(spell.index)
     ))
