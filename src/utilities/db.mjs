@@ -90,7 +90,7 @@ const db = {
           }
         }
         return relevantInfo
-      })
+      }).catch(console.log)
   },
 
   getSpells: async function (clas) {

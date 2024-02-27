@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import db from "../../utilities/db.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SpellbookTile from "./SpellbookTile";
 
 export default function SpellByLevel({ level, spells }) {
 
@@ -18,10 +19,8 @@ export default function SpellByLevel({ level, spells }) {
   const levelInfo = level > 0 ? ` Level ${level} Spells` : 'Cantrips'
   return (
     <View>
-      <Text className="font-bold text-primary">
-        {levelInfo}
-      </Text>
-      {levelXspells && levelXspells.map((spell, i) => (<Text key={i}>{spell.name}</Text>))}
+<SpellbookTile level={level} spells={spells} />
+      {/* {levelXspells && levelXspells.map((spell, i) => (<Text key={i}>{spell.name}</Text>))} */}
     </View>
   )
 }

@@ -39,34 +39,40 @@ export default function AddNpc({ navigation }) {
 
   useEffect(() => {
 
-    //TODO: set spells and cantrips known. It'll help for later.
-
     AsyncStorage.multiGet(classNames)
       .then(data => {
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         setClasses(loadedClasses)
         setClas(loadedClasses[0])
-        db.getSpells(loadedClasses[0].index)
-          .then((data) => {
-            //Sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
-            setSpells(p.parseSpellsIntoSlots(data))
-          })
-        db.getSpellcastingInfo(loadedClasses[0].index, 1)
-          .then(spellcastingInfo => {
-            setSpellsKnown(p.parseSpellInfo(spellcastingInfo, 1))
-            p.parseSlots(spellcastingInfo, setSpellSlots)
-          })
-          .catch(setError)
+        // db.getSpells(loadedClasses[0].index)
+        //   .then((data) => {
+        //     //Sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
+        //     setSpells(p.parseSpellsIntoSlots(data))
+        //   })
+        //   .catch(err => {
+        //     console.log("Error fetching spells: ", err)
+        //   })
+        // db.getSpellcastingInfo(loadedClasses[0].index, 1)
+        //   .then(spellcastingInfo => {
+        //     setSpellsKnown(p.parseSpellInfo(spellcastingInfo, 1))
+        //     p.parseSlots(spellcastingInfo, setSpellSlots)
+        //   })
+          // .catch(err => {
+          //   console.log('Error in initial load: ', err)
+          // })
         setForm({ ...form, clas: loadedClasses[0].name })
+        updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
       })
   }, [])
 
   //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
-  const updateModifiers = (clas, race, subrace, level) => {
+  const updateModifiers = (clas, race, subrace, level, passedClasses) => {
     clas = clas || form.clas
     race = race || form.race
     subrace = subrace || form.subrace
     level = level || form.level
+    passedClasses = passedClasses || classes
+    
 
     //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
     db.getSpells(p.toIndex(clas)).then((data) => {
@@ -76,6 +82,7 @@ export default function AddNpc({ navigation }) {
     //Gets level-specific spellcasting info for this class
     db.getSpellcastingInfo(p.toIndex(clas), parseInt(level))
       .then(spellcastingInfo => {
+
         // { cantrips_known: num,
         //   spell_slots_level_x: num,
         //   ...
@@ -90,17 +97,23 @@ export default function AddNpc({ navigation }) {
         //Returns an array with indexes corresponding to spell levels:
         //[3, 3, 2] = 3 level 1 slots, 3 level 2 slots, 2 level 3...
         p.parseSlots(spellcastingInfo, setSpellSlots)
-        const expandedClass = classes.find(entry => (entry.name === clas))
+        //console.log(clas, "what we're searching classes.find for")
+        const expandedClass = passedClasses.find(entry => (entry.name))
 
         const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
 
         const expandedSubrace = races.find(raceObj => (raceObj.name === race))
           .subraces.find(subraceObj => (subraceObj.name === subrace))
 
-        const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
+          
+          const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
 
         //Update modifiers
         setModifiers(parsedModifiers)
+      })
+      //I know, I know
+      .catch(err => {
+        console.log("Error updating modifiers: ", err)
       })
 
   }
@@ -205,6 +218,7 @@ export default function AddNpc({ navigation }) {
           <Text>{`Level ${i + 1} slots: ${slot}`}</Text>
         </View>
       ))}
+
       <Button text="Spells" onPress={handleSpells} />
 
       <Button text="Submit" onPress={handleSubmit} />
