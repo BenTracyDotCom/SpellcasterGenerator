@@ -33,7 +33,10 @@ export default function AddNpc({ navigation }) {
     modifiers: {},
     spellsKnown: {},
     spells: [],
-    prepared: 4
+    prepared: 4,
+    proficiency: 2,
+    spellAttack: 5,
+    spellSaveDc: 13
   })
 
 
@@ -50,13 +53,14 @@ export default function AddNpc({ navigation }) {
   }, [])
 
   //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
-  const updateModifiers = (clas, race, subrace, level, passedClasses) => {
+  const updateModifiers = (clas, race, subrace, level, passedClasses, proficiency) => {
     clas = clas || form.clas
     race = race || form.race
     subrace = subrace || form.subrace
     level = level || form.level
     passedClasses = passedClasses || classes
-    
+    proficiency = proficiency || form.proficiency
+
 
     //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
     db.getSpells(p.toIndex(clas)).then((data) => {
@@ -88,8 +92,9 @@ export default function AddNpc({ navigation }) {
         const expandedSubrace = races.find(raceObj => (raceObj.name === race))
           .subraces.find(subraceObj => (subraceObj.name === subrace))
 
-          
-          const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
+        const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
+
+        setForm({...form, spellAttack: (parsedModifiers[castingAbility] + proficiency), spellSaveDc: (8 + parsedModifiers[castingAbility] + proficiency)})
 
         //Update modifiers
         setModifiers(parsedModifiers)
@@ -139,8 +144,13 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleLevel = (e) => {
-    setForm({ ...form, level: e })
-    updateModifiers(null, null, null, e)
+    const lvl = parseInt(e)
+    const proficiency = lvl < 5 ? 2 :
+      lvl >= 5 && lvl < 9 ? 3 :
+        lvl >= 9 && lvl < 13 ? 4 :
+          lvl >= 13 && lvl < 17 ? 5 : 6
+    setForm({ ...form, level: e, proficiency: proficiency })
+    updateModifiers(null, null, null, e, null, proficiency)
   }
 
   const handleSpells = (e) => {
@@ -149,7 +159,7 @@ export default function AddNpc({ navigation }) {
       spells: spells,
       spellSlots: spellSlots,
       spellsKnown: spellsKnown,
-      npc: {...form, modifiers: modifiers}
+      npc: { ...form, modifiers: modifiers }
     })
   }
 
@@ -197,8 +207,13 @@ export default function AddNpc({ navigation }) {
         ))}
       </Picker>
 
+      <View className="flex flex-row justify-around">
+        <Text>{`Spell attack: ${form.spellAttack}`}</Text>
+        <Text>{`Spell save DC: ${form.spellSaveDc}`}</Text>
+      </View>
+
       {spellSlots ? spellSlots.map((slot, i) => (
-        <View key={i}>
+        <View key={i} className="mx-auto">
           <Text>{`Level ${i} slots: ${slot}`}</Text>
         </View>
       )) : null}
