@@ -100,6 +100,13 @@ const db = {
     ))
   },
 
+  getSpell: async function (index) {
+    return AsyncStorage.getItem(index)
+    .then(spell => (
+      JSON.parse(spell)
+    ))
+  },
+
   getClass: async function (clas) {
     return AsyncStorage.getItem(clas.index ? clas.index : clas)
   }
