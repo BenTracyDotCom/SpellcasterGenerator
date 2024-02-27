@@ -5,7 +5,7 @@ import {default as db } from "../../utilities/db.mjs"
 import TileHeader from "./TileHeader";
 import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, navigatoin }) {
+export default function SpellbookTile({ level, spells, spellsKnown, navigation }) {
 
   const [randomSpells, setRandomSpells] = useState([])
   const [max, setMax] = useState(level === 0 ? spells.length : 2)
@@ -16,7 +16,7 @@ export default function SpellbookTile({ level, spells, spellsKnown, navigatoin }
       ))
       Promise.all(promises)
         .then(expandedSpells => {
-          setRandomSpells(p.distributeSpells(expandedSpells, max))
+          setRandomSpells(p.distributeSpells(expandedSpells, level === 0 ? spellsKnown.cantrips_known : max))
         })
   }, [max])
 
