@@ -160,10 +160,10 @@ export default function AddNpc({ navigation }) {
   return (
     <View>
 
-      <Text>{name}</Text>
-      <Text>{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
+      <Text className="text-3xl text-center font-bold mt-2">{name}</Text>
+      <Text className="text-xl text-center font-bold">{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
 
-      <TextInput placeholder="Name" onChangeText={handleName} />
+      <TextInput placeholder="Input Name" onChangeText={handleName} className="ml-4 text-lg"/>
 
       <Picker selectedValue={form.race} onValueChange={handleRace}>
         {races.map((race, i) => (
