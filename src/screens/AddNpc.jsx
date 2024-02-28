@@ -35,8 +35,6 @@ export default function AddNpc({ navigation }) {
     spells: [],
     prepared: 4,
     proficiency: 2,
-    spellAttack: 5,
-    spellSaveDc: 13
   })
 
 
@@ -53,13 +51,12 @@ export default function AddNpc({ navigation }) {
   }, [])
 
   //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
-  const updateModifiers = (clas, race, subrace, level, passedClasses, proficiency) => {
+  const updateModifiers = (clas, race, subrace, level, passedClasses) => {
     clas = clas || form.clas
     race = race || form.race
     subrace = subrace || form.subrace
     level = level || form.level
     passedClasses = passedClasses || classes
-    proficiency = proficiency || form.proficiency
 
 
     //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
@@ -93,8 +90,6 @@ export default function AddNpc({ navigation }) {
           .subraces.find(subraceObj => (subraceObj.name === subrace))
 
         const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
-
-        setForm({...form, spellAttack: (parsedModifiers[castingAbility] + proficiency), spellSaveDc: (8 + parsedModifiers[castingAbility] + proficiency)})
 
         //Update modifiers
         setModifiers(parsedModifiers)
@@ -150,7 +145,6 @@ export default function AddNpc({ navigation }) {
         lvl >= 9 && lvl < 13 ? 4 :
           lvl >= 13 && lvl < 17 ? 5 : 6
     setForm({ ...form, level: e, proficiency: proficiency })
-    updateModifiers(null, null, null, e, null, proficiency)
   }
 
   const handleSpells = (e) => {
@@ -163,20 +157,8 @@ export default function AddNpc({ navigation }) {
     })
   }
 
-  //TODO: Display pertinent stat blocks once race & class are selected: Attack bonus, save DC, CON save, other saves ? 
-
-  const handleSubmit = () => {
-    //TODO:
-    //check for an array of npc's
-    //if there is one,
-    //parse it, push the new NPC into it, stringify & store it
-    //if not,
-    //create a new array with this NPC as the first entry
-    //stringify the array, then store it
-  }
-
   return (
-    <View className="">
+    <View>
 
       <Text>{name}</Text>
       <Text>{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
@@ -206,11 +188,6 @@ export default function AddNpc({ navigation }) {
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
-
-      <View className="flex flex-row justify-around">
-        <Text>{`Spell attack: ${form.spellAttack}`}</Text>
-        <Text>{`Spell save DC: ${form.spellSaveDc}`}</Text>
-      </View>
 
       {spellSlots ? spellSlots.map((slot, i) => (
         <View key={i} className="mx-auto">
