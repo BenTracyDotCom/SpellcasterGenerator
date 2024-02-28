@@ -6,8 +6,8 @@ export default function Spell({ route }) {
   const { spell } = route.params
 
   return (
-    <SafeAreaView>
-      {spell.concentration ? <Text>Concentration</Text> : null}
+    <View className="my-2 px-3">
+      {spell.concentration ? <Text className="font-bold">Concentration</Text> : null}
       <Text>{`${spell.level ? `Level ${spell.level}` : "Cantrip"} ${spell.school.index}`}</Text>
       <Text>{`Casting time: ${spell.casting_time}`}</Text>
       <View className="flex flex-row">
@@ -21,6 +21,6 @@ export default function Spell({ route }) {
           <Text key={i} className="py-2">{para}</Text>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
