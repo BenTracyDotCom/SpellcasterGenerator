@@ -12,7 +12,7 @@ export default function Spellbook({ route, navigation }) {
   const [ remaining, setRemaining ] = useState(spellsKnown.spells_known)
   const [ npcSpells, setNpcSpells ] = useState([])
   const [ showModal, setShowModal ] = useState(false)
-  const [ modalSpells, setModalSpells ] = useState(['bippity', 'boppity', 'boo'])
+  const [ filter, setFilter ] = useState(() => (spell) => (spell?.concentration))
   const [ modalOnPress, setModalOnPress ] = useState(() => {})
 
   const relevantLevels = spells.slice(0, spellSlots.length)
@@ -39,10 +39,10 @@ export default function Spellbook({ route, navigation }) {
   return (
 
     <SafeAreaView>
-      <SpellModal spells={['bippity', 'boppity', 'boo']} showModal={showModal} setShowModal={setShowModal} onPress={modalOnPress}/>
+      <SpellModal showModal={showModal} setShowModal={setShowModal} onPress={modalOnPress} navigation={navigation} filter={filter} setFilter={setFilter}/>
       <Text>{`Total prepared: ${spellsKnown.spells_known}`}</Text>
       <ScrollView className="my-4">
-        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile npcSpells={npcSpells} setNpcSpells={setNpcSpells} spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} remaining={remaining} setRemaining={setRemaining} relevantLevels={relevantLevels} spellSlots={spellSlots} showModal={showModal} setShowModal={setShowModal} modalOnPress={modalOnPress} setModalOnPress={setModalOnPress} modalSpells={modalSpells} setModalSpells={setModalSpells}/>)) : null}
+        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile npcSpells={npcSpells} setNpcSpells={setNpcSpells} spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} remaining={remaining} setRemaining={setRemaining} relevantLevels={relevantLevels} spellSlots={spellSlots} showModal={showModal} setShowModal={setShowModal} modalOnPress={modalOnPress} setModalOnPress={setModalOnPress} filter={filter} setFilter={setFilter}/>)) : null}
         <Button text="Save" onPress={handleSave} />
       </ScrollView>
     </SafeAreaView>

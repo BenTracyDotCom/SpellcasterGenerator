@@ -59,6 +59,7 @@ const db = {
         api.expandSpells(spells.results, cb)
       ))
       .then(expandedSpells => {
+        AsyncStorage.setItem('allSpells', JSON.stringify(expandedSpells))
         const promises = expandedSpells.map(spell => (
           AsyncStorage.setItem(spell.index, JSON.stringify(spell))
         ))
@@ -68,6 +69,13 @@ const db = {
         cb('Spells stored')
       })
       .catch(err => cb("Error storing spells: " + err))
+  },
+
+  getAllSpells: async function () {
+    return AsyncStorage.getItem('allSpells')
+    .then(spells => (
+      JSON.parse(spells)
+    ))
   },
 
   getLevelInfo: async function (clas, level) {
