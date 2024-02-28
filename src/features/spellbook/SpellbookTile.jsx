@@ -4,9 +4,10 @@ import { default as p } from "../../utilities/parsers.mjs";
 import { default as db } from "../../utilities/db.mjs"
 import TileHeader from "./TileHeader";
 import ClickableSpell from "../../components/ClickableSpell";
+import Button from "../../components/Button";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells }) {
+export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells, showModal, setShowModal, modalSpells, setModalSpells, modalOnPress, setModalOnPress }) {
 
   //TODO: decrement remaining spells once they're assigned
 
@@ -25,7 +26,6 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
       .then(expandedSpells => {
         setRandomSpells(p.distributeSpells(expandedSpells, level === 0 ? spellsKnown.cantrips_known : max))
         setAllSpells(expandedSpells)
-
       })
   }, [max])
 
@@ -43,7 +43,10 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
     <View>
       <TileHeader level={level} max={max} setMax={setMax} spellSlots={spellSlots[level]} reShuffle={reShuffle} />
       {randomSpells.length ? randomSpells.map((spell, i) => (
-        <ClickableSpell navigation={navigation} spell={spell} key={i}/>
+        <View key={i} className="flex flex-row">
+          <ClickableSpell navigation={navigation} spell={spell}/>
+          <Button onPress={() => {setShowModal(!showModal)}} text="< >" />
+        </View>
       )) : null}
 
     </View>
