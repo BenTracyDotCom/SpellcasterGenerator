@@ -14,6 +14,8 @@ export default function Spellbook({ route, navigation }) {
   const [ showModal, setShowModal ] = useState(false)
   const [ filter, setFilter ] = useState(() => (spell) => (spell?.concentration))
   const [ modalOnPress, setModalOnPress ] = useState(() => {})
+  const [ modalSpells, setModalSpells ] = useState([])
+  const [ modalClass, setModalClass ] = useState(npc.clas)
 
   const relevantLevels = spells.slice(0, spellSlots.length)
 
@@ -39,11 +41,11 @@ export default function Spellbook({ route, navigation }) {
   return (
 
     <SafeAreaView>
-      <SpellModal showModal={showModal} setShowModal={setShowModal} onPress={modalOnPress} navigation={navigation} filter={filter} setFilter={setFilter}/>
+      <SpellModal showModal={showModal} setShowModal={setShowModal} onPress={modalOnPress} navigation={navigation} filter={filter} setFilter={setFilter} spells={modalSpells} modalClass={modalClass} setModalClass={setModalClass}/>
       <Text>{`Total prepared: ${spellsKnown.spells_known}`}</Text>
       <ScrollView className="my-4">
-        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile npcSpells={npcSpells} setNpcSpells={setNpcSpells} spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} remaining={remaining} setRemaining={setRemaining} relevantLevels={relevantLevels} spellSlots={spellSlots} showModal={showModal} setShowModal={setShowModal} modalOnPress={modalOnPress} setModalOnPress={setModalOnPress} filter={filter} setFilter={setFilter}/>)) : null}
-        <Button text="Save" onPress={handleSave} />
+        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile npcSpells={npcSpells} setNpcSpells={setNpcSpells} spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} remaining={remaining} setRemaining={setRemaining} relevantLevels={relevantLevels} spellSlots={spellSlots} showModal={showModal} setShowModal={setShowModal} modalOnPress={modalOnPress} setModalOnPress={setModalOnPress} filter={filter} setFilter={setFilter} setModalSpells={setModalSpells} modalSpells={modalSpells} modalClass={modalClass} setModalClass={setModalClass}/>)) : null}
+        <Button text="Save" onPress={handleSave} clas={npc.clas} />
       </ScrollView>
     </SafeAreaView>
   )

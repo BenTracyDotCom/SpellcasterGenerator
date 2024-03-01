@@ -1,40 +1,42 @@
 import { default as db } from "../utilities/db.mjs";
-import { Modal, View, Text, TouchableOpacity, Pressable, ScrollView } from "react-native";
+import { Modal, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState, useEffect } from "react";
 import ClickableSpell from "./ClickableSpell";
 
-export default function SpellModal({ filter, showModal, setShowModal, onPress, spells, navigation }) {
+export default function SpellModal({ filter, modalClass, setModalClass, showModal, setShowModal, onPress, spells, navigation }) {
 
+  spells = spells || []
   onPress = onPress || (() => { })
   filter = filter || ((spell) => (!!spell))
 
-  const [allSpells, setAllSpells] = useState([])
+  //const [allSpells, setAllSpells] = useState([])
   const [filteredSpells, setFilteredSpells] = useState([])
-  const [clas, setClass] = useState("All")
+  const [clas, setClass] = useState(modalClass)
   const classNames = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorceror', 'Warlock', 'Wizard']
 
-  useEffect(() => {
-    db.getAllSpells()
-      .then(spells => {
-        setAllSpells(spells)
-        const filtered = spells.filter(filter)
-        setFilteredSpells(filtered)
-      })
-  }, [])
+  // useEffect(() => {
+  //   db.getAllSpells()
+  //     .then(spells => {
+  //       setAllSpells(spells)
+  //       const filtered = spells.filter(filter)
+  //       setFilteredSpells(filtered)
+  //     })
+  // }, [])
 
-  useEffect(() => {
-    const filtered = allSpells.filter(filter)
-    setFilteredSpells[filtered]
-  }, [filter])
+  // useEffect(() => {
+  //   const filtered = allSpells.filter(filter)
+  //   setFilteredSpells[filtered]
+  // }, [filter])
 
   useEffect(() => {
     if (clas !== "All") {
-      const test = allSpells.filter(spell => (spell.classes.find(clas => (clas.name === 'Druid'))))
-      const clasFiltered = allSpells.filter(spell => (spell.classes.find(classs => (classs.name === clas))))
+      const clasFiltered = spells.filter(spell => (spell.classes.find(classs => (classs.name === clas))))
+      // allSpells.filter(spell => (spell.classes.find(classs => (classs.name === clas))))
       setFilteredSpells(clasFiltered ? clasFiltered.filter(filter) : [])
     } else {
-      setFilteredSpells(allSpells.filter(filter))
+      setFilteredSpells(spells.filter(filter))
+      //setFilteredSpells(allSpells.filter(filter))
     }
   }, [clas])
 
@@ -63,8 +65,10 @@ export default function SpellModal({ filter, showModal, setShowModal, onPress, s
             <ScrollView className="">
               {filteredSpells.length ? filteredSpells.map((spell, i) => (
                 <View key={i} className="mb-2 flex flex-row justify-between border-2 p-2 rounded-lg">
-                  <ClickableSpell spell={spell} navigation={navigation} />
-                  <TouchableOpacity onPress={onPress}>
+                  <TouchableOpacity onPress={() => {setShowModal(!showModal)}}>
+                    <ClickableSpell spell={spell} navigation={navigation}/>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {onPress(spell)}}>
                     <Text>✔</Text>
                   </TouchableOpacity>
                 </View>

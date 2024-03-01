@@ -7,7 +7,7 @@ import ClickableSpell from "../../components/ClickableSpell";
 import Button from "../../components/Button";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells, showModal, setShowModal, modalSpells, setModalSpells, modalOnPress, setModalOnPress }) {
+export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells, showModal, setShowModal, modalSpells, setModalSpells, modalOnPress, setModalOnPress, setFilter, setModalClass, modalClass, clas }) {
 
   //TODO: decrement remaining spells once they're assigned
 
@@ -26,6 +26,7 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
       .then(expandedSpells => {
         setRandomSpells(p.distributeSpells(expandedSpells, level === 0 ? spellsKnown.cantrips_known : max))
         setAllSpells(expandedSpells)
+        setFilter((spell) => (spell.level === level))
       })
   }, [max])
 
@@ -39,13 +40,23 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
     setRandomSpells(p.distributeSpells(allSpells, level === 0 ? spellsKnown.cantrips_known : max))
   }
 
+  const handleSwap = () => {
+    setModalSpells(allSpells.filter(spell => (!npcSpells.includes(spell))))
+    setFilter((spell) => spell.level === level)
+    setModalClass(clas)
+    setModalOnPress(() => console.log('For the love of God, just do this in redux. Your states are outta control. You don\'t even have a means to swap these spells but it would be an easy dispatch action. Lord help us.'))
+    setShowModal(!showModal)
+  }
+
   return (
     <View>
       <TileHeader level={level} max={max} setMax={setMax} spellSlots={spellSlots[level]} reShuffle={reShuffle} />
       {randomSpells.length ? randomSpells.map((spell, i) => (
-        <View key={i} className="flex flex-row">
+        <View key={i} className="flex flex-row justify-between px-3">
           <ClickableSpell navigation={navigation} spell={spell}/>
-          <Button onPress={() => {setShowModal(!showModal)}} text="< >" />
+          <TouchableOpacity onPress={handleSwap}>
+            <Text>{'<>'}</Text>
+          </TouchableOpacity>
         </View>
       )) : null}
 
