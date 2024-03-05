@@ -3,14 +3,14 @@ import { Modal, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleModal } from "./spellbookSlice";
+import { toggleModal, updateModal } from "./spellbookSlice";
 import ClickableSpell from "../../components/ClickableSpell";
 
 export default function SpellModal({ navigation }) {
 
   const dispatch = useDispatch()
 
-  const { show, spells, swap, filter, clas } = useSelector(state => state.spellbook.modal)
+  const { show, spells, swap, filter, clas, filteredSpells } = useSelector(state => state.spellbook.modal)
 
 
   const classNames = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorceror', 'Warlock', 'Wizard']
@@ -41,9 +41,19 @@ export default function SpellModal({ navigation }) {
   // }, [clas])
 
   const handleClass = (e) => {
-    dispatch(updateModal({ clas: e }))
+    dispatch(updateModal({ 
+      clas: e,
+      filter: ['class', ] 
+    }))
+    
     // setClass(e)
   }
+
+  const handleSwap = (spell) => {
+    console.log(spell)
+  }
+
+  console.log(filteredSpells, 's/b single spell')
 
   return (
     <Modal
@@ -62,18 +72,16 @@ export default function SpellModal({ navigation }) {
               <Picker.Item label="All" value="All" />
               {classNames.map((name, i) => (<Picker.Item label={name} value={name} key={i} />))}
             </Picker>
-            <ScrollView className="">
+            {/* <ScrollView className="">
               {filteredSpells.length ? filteredSpells.map((spell, i) => (
                 <View key={i} className="mb-2 flex flex-row justify-between border-2 p-2 rounded-lg">
-                  <TouchableOpacity onPress={() => {setShowModal(!showModal)}}>
                     <ClickableSpell spell={spell} navigation={navigation}/>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => {onPress(spell)}}>
+                  <TouchableOpacity onPress={() => handleSwap(spell)}>
                     <Text>✔</Text>
                   </TouchableOpacity>
                 </View>
               )) : null}
-            </ScrollView>
+            </ScrollView> */}
           </View>
         </View>
           <TouchableOpacity onPress={() => { dispatch(toggleModal()) }} className="w-full border-2 rounded-full w-min mx-auto bg-primary">
