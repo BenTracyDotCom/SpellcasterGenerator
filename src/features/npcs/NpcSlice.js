@@ -24,7 +24,7 @@ export const npcSlice = createSlice({
     level: '1',
     spellcastingAbility: 'wis',
     modifiers: {},
-    spellsKnown: [],
+    spellsKnown: {},
     spells: [],
     prepared: 4,
     proficiency: 2
@@ -50,8 +50,16 @@ export const npcSlice = createSlice({
         state.modifiers = p.parseModifiers(castingAbility, newSubrace, level)
       }
     },
+    // This is just slot info
     updateSlots: (state, action) => { 
       state.slots = p.parseSlots(action.payload.spellcastingInfo)
+    },
+    //This gives total number of spells/cantrips known, also slots per level (redundant)
+    updateSpellsKnown: (state, action) => {
+      state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
+    },
+    updateSpells: (state, action) => {
+      state.spells = action.payload
     },
     updateNpc: (state, action) => {
       Object.keys(action.payload).forEach(key => {
@@ -61,8 +69,6 @@ export const npcSlice = createSlice({
   }
 })
 
-//TODO: Add an async function to save this NPC into the database as part of an array of NPCs
-
-export const { loadClasses, updateModifiers, updateSlots, updateNpc } = npcSlice.actions
+export const { loadClasses, updateModifiers, updateSlots, updateSpells, updateNpc } = npcSlice.actions
 
 export default npcSlice.reducer
