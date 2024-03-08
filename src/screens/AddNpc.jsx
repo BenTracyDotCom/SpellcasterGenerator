@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { loadSpellbook } from '../features/spellbook/spellbookSlice';
+import { loadClasses, updateModifiers, updateNpc } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -23,6 +26,8 @@ export default function AddNpc({ navigation }) {
   const [error, setError] = useState('')
   const [modifiers, setModifiers] = useState({})
 
+  const dispatch = useDispatch()
+
   const [form, setForm] = useState({
     name: '',
     race: race.name,
@@ -38,15 +43,29 @@ export default function AddNpc({ navigation }) {
   })
 
 
+  //This is a workaround from the loading screen because it wasn't waiting for the prior operation to finish
   useEffect(() => {
-
-    AsyncStorage.multiGet(classNames)
+    AsyncStorage.getItem('spellsLoaded')
+      .then((data) => {
+        if (!data) {
+          db.getSimpleSpells((() => {}))
+            .then(spells => dispatch(loadSpellbook(spells)))
+        }
+      })
+    
+      AsyncStorage.getItem('classesLoaded')
       .then(data => {
-        const loadedClasses = data.map(store => (JSON.parse(store[1])))
-        setClasses(loadedClasses)
-        setClas(loadedClasses[0])
-        setForm({ ...form, clas: loadedClasses[0].name })
-        updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
+        if(!data){
+          AsyncStorage.multiGet(classNames)
+            .then(data => {
+              const loadedClasses = data.map(store => (JSON.parse(store[1])))
+              setClasses(loadedClasses)
+              setClas(loadedClasses[0])
+              setForm({ ...form, clas: loadedClasses[0].name })
+              updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
+              AsyncStorage.setItem('classesLoaded', 'true')
+            })
+        }
       })
   }, [])
 
@@ -81,7 +100,7 @@ export default function AddNpc({ navigation }) {
 
         //Returns an array with indexes corresponding to spell levels:
         //[3, 3, 2] = 3 level 1 slots, 3 level 2 slots, 2 level 3...
-        p.parseSlots(spellcastingInfo, setSpellSlots)
+        setSpellSlots(p.parseSlots(spellcastingInfo))
         const expandedClass = passedClasses.find(entry => (entry.name))
 
         const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
@@ -163,7 +182,7 @@ export default function AddNpc({ navigation }) {
       <Text className="text-3xl text-center font-bold mt-2">{name}</Text>
       <Text className="text-xl text-center font-bold">{`${form.race}${form.subrace !== 'Normal' ? `(${form.subrace})` : ''} ${form.clas} ${form.level}`}</Text>
 
-      <TextInput placeholder="Input Name" onChangeText={handleName} className="ml-4 text-lg"/>
+      <TextInput placeholder="Input Name" onChangeText={handleName} className="ml-4 text-lg" />
 
       <Picker selectedValue={form.race} onValueChange={handleRace}>
         {races.map((race, i) => (

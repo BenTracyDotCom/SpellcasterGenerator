@@ -58,6 +58,19 @@ const api = {
     const spells = response.json()
     return spells
   },
+  fetchSimpleSpells: async function () {
+    return fetch(this.graphqlEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: print(gql.simpleSpellsQuery),
+      })
+    })
+      .then(res => (res.json()))
+  },
   expandSpells: async function (spells, cb) {
     cb('Expanding spell data...')
     const promises = spells.map(spell => (

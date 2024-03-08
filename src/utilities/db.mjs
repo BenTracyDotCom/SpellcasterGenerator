@@ -25,9 +25,9 @@ const db = {
 
   storeClasses: async function (cb) {
     api.fetchClasses(cb)
-    .then(data => {
-      cb('Storing classes...')
-      //For each class, this creates an entry for the class, a spell list for that class, and level info for that class.
+      .then(data => {
+        cb('Storing classes...')
+        //For each class, this creates an entry for the class, a spell list for that class, and level info for that class.
         const promises = data.map((clas) => {
           const promises = [
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
@@ -51,7 +51,7 @@ const db = {
       })
       .catch(err => cb('Error storing classes: ' + err))
   },
-
+  //TODO: refactor this to store an array of simple spell info under "spells"
   storeSpells: async function (cb) {
     cb('Storing spells...')
     api.fetchSpells(cb)
@@ -59,6 +59,7 @@ const db = {
         api.expandSpells(spells.results, cb)
       ))
       .then(expandedSpells => {
+        //TODO: refactor to store each spell with an index as its name
         AsyncStorage.setItem('allSpells', JSON.stringify(expandedSpells))
         const promises = expandedSpells.map(spell => (
           AsyncStorage.setItem(spell.index, JSON.stringify(spell))
@@ -70,14 +71,24 @@ const db = {
       })
       .catch(err => cb("Error storing spells: " + err))
   },
-
+  storeSimpleSpells: async function (cb) {
+    await api.fetchSimpleSpells(cb)
+      .then(res => {
+        return AsyncStorage.setItem("simpleSpells", JSON.stringify(res.data.spells))
+      }
+      )
+  },
+  getSimpleSpells: async function (cb) {
+    cb ? cb('Loading spellbook') : null
+    const simpleSpells = await AsyncStorage.getItem('simpleSpells')
+    return JSON.parse(simpleSpells)
+  },
   getAllSpells: async function () {
     return AsyncStorage.getItem('allSpells')
-    .then(spells => (
-      JSON.parse(spells)
-    ))
+      .then(spells => (
+        JSON.parse(spells)
+      ))
   },
-
   getLevelInfo: async function (clas, level) {
     return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
       .then(store => {
@@ -85,7 +96,13 @@ const db = {
         return levels[level - 1]
       })
   },
-
+  storeNpcs: async function (npcs) {
+    if(typeof npcs === 'string'){
+      AsyncStorage.setItem('npcs', npcs)
+    } else {
+      AsyncStorage.setItem('npcs', JSON.stringify(npcs))
+    }
+  },
   getSpellcastingInfo: async function (clas, level) {
     return this.getLevelInfo(clas, level)
       .then(info => {
@@ -103,16 +120,16 @@ const db = {
 
   getSpells: async function (clas) {
     return AsyncStorage.getItem(clas.index ? clas.index + '-spells' : clas + '-spells')
-    .then((spells) => (
-      JSON.parse(spells)
-    ))
+      .then((spells) => (
+        JSON.parse(spells)
+      ))
   },
 
   getSpell: async function (index) {
     return AsyncStorage.getItem(index)
-    .then(spell => (
-      JSON.parse(spell)
-    ))
+      .then(spell => (
+        JSON.parse(spell)
+      ))
   },
 
   getClass: async function (clas) {

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector } from "react-redux";
 import Button from "../components/Button";
 
 export default function StorageTest({ navigation }) {
@@ -8,6 +9,8 @@ export default function StorageTest({ navigation }) {
   const [displayed, setDisplayed] = useState('')
   const [spells, setSpells] = useState([])
   const [error, setError] = useState('')
+
+  const spellbookSpells = useSelector(state => state.spellbook.spells)
 
   const handleSave = () => {
     AsyncStorage.setItem('testData', 'Rabbit')
@@ -57,6 +60,10 @@ export default function StorageTest({ navigation }) {
     //TODO: Navigate to spell screen once built
   }
 
+  const checkSpellbook = () => {
+    setSpells(spellbookSpells)
+  }
+
   return (
     <View className="items-center">
       <Text>
@@ -68,8 +75,7 @@ export default function StorageTest({ navigation }) {
       <Text className="text-red-500">
         {error}
       </Text>
-      <Button text="Save 'Rabbit'" onPress={handleSave} />
-      <Button text="Fetch 'Rabbit'" onPress={handleFetch} />
+ <Button text="Check spellbook" onPress={checkSpellbook} />
       <Button text="Clear Storage" onPress={handleDelete} />
       <Button text="Fetch Cleric Spells" onPress={handleClericSpell} />
       <Button text="Cleric 3 Info" onPress={handleCleric3} />
@@ -77,7 +83,7 @@ export default function StorageTest({ navigation }) {
       {spells ? spells.map((spell, i) => (
         <View key={i}>
           <TouchableOpacity onPress={() => { }}>
-            <Text>{spell}</Text>
+            <Text>{spell.name}</Text>
           </TouchableOpacity>
         </View>
       )) : null}

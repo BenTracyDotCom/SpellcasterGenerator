@@ -17,7 +17,7 @@ export const spellbookSlice = createSlice({
     }
   },
   reducers: {
-    loadSpells: (state, action) => {
+    loadSpellbook: (state, action) => {
       state.spells = action.payload
     },
     toggleModal: state => {
@@ -49,6 +49,6 @@ export const spellbookSlice = createSlice({
   },
 })
 
-export const { toggleModal, updateModal, filterSpells, filterModalSpells, filterModalByClass, filterModalByLevel } = spellbookSlice.actions
+export const { loadSpellbook, toggleModal, updateModal, filterSpells, filterModalSpells, filterModalByClass, filterModalByLevel } = spellbookSlice.actions
 
 export default spellbookSlice.reducer

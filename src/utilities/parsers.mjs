@@ -1,11 +1,11 @@
 const parsers = {
-  parseSlots: (spellcastingInfo, cb) => {
+  parseSlots: (spellcastingInfo) => {
     const slots = []
     const slotInfo = Object.keys(spellcastingInfo).filter(key => (parseInt(key.slice(-1)) !== NaN))
     slotInfo.forEach(slot => {
       slots[parseInt(slot.slice(-1))] = spellcastingInfo[slot]
     })
-    cb(slots)
+    return slots
   },
 
   parseSpellsKnown: (spellObj, level) => {

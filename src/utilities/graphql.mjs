@@ -39,9 +39,21 @@ query ClassSpellsByLevel($index: String) {
 }
 `;
 
-const graphqlQueries = {
-  spellsByClassQuery: spellsByClassQuery
-  //requires variable { "index": "cleric"}
+const simpleSpellsQuery = gql`
+query simpleSpellsQuery {
+  spells {
+    name
+    level
+    index
+    classes {
+      index
+      name
+    }
+  }
 }
+`;
 
-export default graphqlQueries
+export default graphqlQueries = {
+  spellsByClassQuery: spellsByClassQuery,
+  simpleSpellsQuery: simpleSpellsQuery
+}
