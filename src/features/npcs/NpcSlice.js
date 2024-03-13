@@ -1,8 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { default as p } from "../../utilities/parsers.mjs";
 import { default as db } from "../../utilities/db.mjs";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const fetchSpells = createAsyncThunk(
+  'npc/fetchSpells',
+  async (clas) => {
+    const spells = db.getSpells(clas)
+    //TODO: put this into a builder under extraReducers and use it to update my lil spells array in state
+  }
+)
 
 export const npcSlice = createSlice({
   name: 'npc',
@@ -54,7 +62,7 @@ export const npcSlice = createSlice({
     updateSlots: (state, action) => { 
       state.slots = p.parseSlots(action.payload.spellcastingInfo)
     },
-    //This gives total number of spells/cantrips known, also slots per level (redundant)
+    //This gives total number of spells/cantrips known (prepared), also slots per level (redundant)
     updateSpellsKnown: (state, action) => {
       state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
     },
@@ -69,6 +77,6 @@ export const npcSlice = createSlice({
   }
 })
 
-export const { loadClasses, updateModifiers, updateSlots, updateSpells, updateNpc } = npcSlice.actions
+export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc } = npcSlice.actions
 
 export default npcSlice.reducer

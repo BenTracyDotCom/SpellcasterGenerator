@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadSpellbook } from '../features/spellbook/spellbookSlice';
-import { loadClasses, updateModifiers, updateNpc } from '../features/npcs/NpcSlice'
+import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -71,6 +71,20 @@ export default function AddNpc({ navigation }) {
 
   //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
   const updateModifiers = (clas, race, subrace, level, passedClasses) => {
+
+    /* Dispatch action requires:
+       {
+        clas: 'Name',
+        race: 'Name' 
+           OR
+        subrace: {
+          name: 'Name'
+          modifiers: {}
+        }
+        level: '1'
+       }
+    */
+
     clas = clas || form.clas
     race = race || form.race
     subrace = subrace || form.subrace
@@ -80,12 +94,17 @@ export default function AddNpc({ navigation }) {
 
     //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
     db.getSpells(p.toIndex(clas)).then((data) => {
+
+      dispatch(updateSpells(p.parseSpellsIntoSlots(data)))
       setSpells(p.parseSpellsIntoSlots(data));
     })
 
     //Gets level-specific spellcasting info for this class
     db.getSpellcastingInfo(p.toIndex(clas), parseInt(level))
       .then(spellcastingInfo => {
+
+        dispatch(updateSlots(spellcastingInfo))
+        dispatch(updateSpellsKnown(spellcastingInfo))
 
         // { cantrips_known: num,
         //   spell_slots_level_x: num,
