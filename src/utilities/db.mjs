@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api.mjs";
 import races from "./races.mjs";
+import { default as p } from "./parsers.mjs";
 
 /*================= DB ORGANIZATION ==========================
   
@@ -31,11 +32,12 @@ const db = {
         const promises = data.map((clas) => {
           const promises = [
             AsyncStorage.setItem(clas.index, JSON.stringify(clas)),
-            api.fetchSpellsByClass(clas.index)
-              .then(classSpells => (
-                AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.data.class))
-              ))
-              .catch(err => console.log("error fetching class-specific spells: ", err)),
+            //It'll be more convenient to store all spells, then filter as needed
+            // api.fetchSpellsByClass(clas.index)
+            //   .then(classSpells => (
+            //     AsyncStorage.setItem(clas.index + '-spells', JSON.stringify(classSpells.data.class))
+            //   ))
+            //   .catch(err => console.log("error fetching class-specific spells: ", err)),
             api.fetchClassLevels(clas)
               .then(classLevels => (
                 AsyncStorage.setItem(clas.index + '-levels', JSON.stringify(classLevels))
@@ -90,14 +92,14 @@ const db = {
       ))
   },
   getLevelInfo: async function (clas, level) {
-    return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : clas + '-levels')
+    return AsyncStorage.getItem(clas.index ? clas.index + '-levels' : p.toIndex(clas) + '-levels')
       .then(store => {
         const levels = JSON.parse(store)
-        return levels[level - 1]
+        return levels[parseInt(level) - 1]
       })
   },
   storeNpcs: async function (npcs) {
-    if(typeof npcs === 'string'){
+    if (typeof npcs === 'string') {
       AsyncStorage.setItem('npcs', npcs)
     } else {
       AsyncStorage.setItem('npcs', JSON.stringify(npcs))

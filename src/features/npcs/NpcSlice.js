@@ -1,23 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { default as p } from "../../utilities/parsers.mjs";
 import { default as db } from "../../utilities/db.mjs";
+import { default as wizardSpellcasting } from "../../utilities/wizardLevels";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const fetchSpells = createAsyncThunk(
-  'npc/fetchSpells',
-  async (clas) => {
-    const spells = db.getSpells(clas)
-    //TODO: put this into a builder under extraReducers and use it to update my lil spells array in state
+export const fetchPrepared = createAsyncThunk(
+  'npc/fetchPrepared',
+  async (payload) => {
+    console.log(payload, 'passed to fetchPrepared')
+    const { clas, level } = payload
+    const prepared = await db.getLevelInfo(clas, level)
+    console.log(prepared, "s/b spellcasting info")
+    //TODO: put this into a builder under extraReducers and use it to update my prepared/slot info in state
   }
 )
 
 export const npcSlice = createSlice({
   name: 'npc',
+  error: '',
+  spellcastingInfo: wizardSpellcasting[0],
   initialState: {
     //Expanded class info
     classes: [],
-    class: {},
+    clas: {},
     //Numbers with indexes corresponding to spell level
     slots: [],
     name: '',
@@ -43,13 +49,18 @@ export const npcSlice = createSlice({
       state.classes = action.payload
     },
     updateClass: (state, action) => {
-      state.class = action.payload
+      const newClas = state.classes.find(clas => (clas.name === action.payload))
+      
     },
     updateModifiers: (state, action) => {
-      const castingAbility = state.classes.find(clas => clas.name === action.payload.clas ? action.payload.clas : state.clas)
-      const level = action.payload.level ? action.payload.level : state.level
-      const subrace = action.payload.subrace ? action.payload.subrace : state.subrace
+      const name = action.payload && action.payload.clas ? action.payload.clas : state.clas
+      const castingAbility = state.classes.find(clas => clas.name === name).spellcasting.index
+      const level = action.payload && action.payload.level ? action.payload.level : state.level
+      const subrace = action.payload && action.payload.subrace ? action.payload.subrace : state.subrace
       state.modifiers = p.parseModifiers(castingAbility, subrace, level)
+      state.spellcastingAbility = castingAbility
+      state.level = level
+      state.subrace = subrace
     },
     // This is just slot info
     updateSlots: (state, action) => {
@@ -57,16 +68,27 @@ export const npcSlice = createSlice({
     },
     //This gives total number of spells/cantrips known (prepared), also slots per level (redundant)
     updateSpellsKnown: (state, action) => {
+      const level = action.payload.level ? action.payload.level : state.level
       state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
     },
     updateSpells: (state, action) => {
       state.spells = action.payload
     },
+    //This is used to move data from character creation form into state
     updateNpc: (state, action) => {
       Object.keys(action.payload).forEach(key => {
         state[key] = action.payload[key]
       })
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchPrepared.fulfilled, (state) => {
+      state.error = ''
+      
+    })
+    builder.addCase(fetchPrepared.rejected, (state, action) => {
+      state.error = action.error
+    })
   }
 })
 

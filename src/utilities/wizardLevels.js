@@ -1,4 +1,4 @@
-[
+const wizardLevels = [
 	{
 		"level": 1,
 		"ability_score_bonuses": 0,
@@ -619,3 +619,5 @@
 		"url": "/api/classes/wizard/levels/20"
 	}
 ]
+
+export default wizardLevels

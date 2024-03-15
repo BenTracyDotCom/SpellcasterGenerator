@@ -1,38 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 import wizardSpell from "../../utilities/wizardSpells";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+export const fetchSpells = createAsyncThunk(
+  'npc/fetchSpells',
+  async (clas) => {
+    const spells = db.getSpells(clas)
+    //TODO: put this into a builder under extraReducers and use it to update my lil spells array in state
+  }
+)
 
 export const spellbookSlice = createSlice({
   name: 'spellbook',
   initialState: {
+    //This will hold a 3d array of simple versions of all spells
     spells: [ wizardSpell ],
-    spellsByLevel: {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: []
-    },
     filteredSpells: [ wizardSpell ],
     modal: {
       show: false,
       spells: [ wizardSpell ],
       filteredSpells: [ wizardSpell ],
       swap: true,
-      //Modal filter will include all items where item[filter[0]] === filter[1]
       filter: ['', undefined],
       clas: 'All',
     }
   },
   reducers: {
-    //loads alll expanded spells into this state
+    //loads all simple spells into this state
     loadSpellbook: (state, action) => {
       state.spells = action.payload
-      console.log(state.spells[0], "first spell or set of spells")
     },
     toggleModal: state => {
       state.modal.show = !state.modal.show
@@ -43,6 +40,7 @@ export const spellbookSlice = createSlice({
       })
     },
     //e.g. "Where 'class' === 'wizard'" filter looks like ['class', 'wizard']
+    //Better handled by specific attributes as below
     filterSpells: (state, action) => {
       const filtered = state.spells.slice(0).filter(spell => spell[action.payload[0]] === action.payload[1])
       state.filteredSpells = filtered
@@ -61,7 +59,7 @@ export const spellbookSlice = createSlice({
       const filteredByLevel = state.spells.filter(spell => (spell.level === parseInt(action.payload)))
       state.modal.spells = filteredByLevel
     },
-    randomizeSpells: () => {
+    randomizeSpells: (state, action) => {
       
     }
   },
