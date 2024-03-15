@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadSpellbook } from '../features/spellbook/spellbookSlice';
-import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc } from '../features/npcs/NpcSlice'
+import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -14,8 +14,8 @@ import { default as p } from '../utilities/parsers.mjs';
 export default function AddNpc({ navigation }) {
 
   const [name, setName] = useState('New NPC')
-  const [classes, setClasses] = useState([])
-  const [clas, setClas] = useState({})
+  //const [classes, setClasses] = useState([])
+  //const [clas, setClas] = useState({})
   const [race, setRace] = useState(races[0])
   const [spellsKnown, setSpellsKnown] = useState()
   const [subrace, setSubrace] = useState(races[0].subraces[0])
@@ -27,6 +27,8 @@ export default function AddNpc({ navigation }) {
   const [modifiers, setModifiers] = useState({})
 
   const dispatch = useDispatch()
+
+  const { classes, clas } = useSelector(state => state.npc)
 
   const [form, setForm] = useState({
     name: '',
@@ -59,12 +61,16 @@ export default function AddNpc({ navigation }) {
           AsyncStorage.multiGet(classNames)
             .then(data => {
               const loadedClasses = data.map(store => (JSON.parse(store[1])))
-              setClasses(loadedClasses)
-              setClas(loadedClasses[0])
+              dispatch(loadClasses(loadedClasses))
+              dispatch(updateClass(loadedClasses[0]))
+              //setClasses(loadedClasses)
+              //setClas(loadedClasses[0])
               setForm({ ...form, clas: loadedClasses[0].name })
               updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
               AsyncStorage.setItem('classesLoaded', 'true')
             })
+        } else {
+          
         }
       })
   }, [])
@@ -93,6 +99,7 @@ export default function AddNpc({ navigation }) {
 
 
     //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
+    //TODO: Get simplified spells instead of full, expanded spells
     db.getSpells(p.toIndex(clas)).then((data) => {
 
       dispatch(updateSpells(p.parseSpellsIntoSlots(data)))
@@ -167,11 +174,17 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleSubrace = (e) => {
+    dispatch(updateModifiers({subrace: e}))
+
     setForm({ ...form, subrace: e })
     updateModifiers(null, form.race, e)
   }
 
   const handleClass = (e) => {
+    //TODO: have this update redux state
+    dispatch(updateClass(e))
+    dispatch(updateModifiers({clas: e}))
+
     setForm({ ...form, clas: e })
     updateModifiers(e)
   }

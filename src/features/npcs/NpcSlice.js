@@ -17,11 +17,12 @@ export const npcSlice = createSlice({
   initialState: {
     //Expanded class info
     classes: [],
+    class: {},
     //Numbers with indexes corresponding to spell level
     slots: [],
     name: '',
     race: 'Dwarf',
-    subrace:       {
+    subrace: {
       name: "Hill",
       bonuses: {
         con: 1,
@@ -41,25 +42,17 @@ export const npcSlice = createSlice({
     loadClasses: (state, action) => {
       state.classes = action.payload
     },
+    updateClass: (state, action) => {
+      state.class = action.payload
+    },
     updateModifiers: (state, action) => {
       const castingAbility = state.classes.find(clas => clas.name === action.payload.clas ? action.payload.clas : state.clas)
       const level = action.payload.level ? action.payload.level : state.level
-      if(action.payload.race || action.payload.subrace){
-        let newSubrace
-        if(action.payload.race){
-          const race = races.filter(race => (race.name === action.payload.race))[0]
-          newSubrace = race.subraces[0]
-        } else if(action.payload.subrace){
-          newSubrace = action.payload.subrace
-        } else {
-          newSubrace = state.subrace
-        }
-        state.subrace = newSubrace
-        state.modifiers = p.parseModifiers(castingAbility, newSubrace, level)
-      }
+      const subrace = action.payload.subrace ? action.payload.subrace : state.subrace
+      state.modifiers = p.parseModifiers(castingAbility, subrace, level)
     },
     // This is just slot info
-    updateSlots: (state, action) => { 
+    updateSlots: (state, action) => {
       state.slots = p.parseSlots(action.payload.spellcastingInfo)
     },
     //This gives total number of spells/cantrips known (prepared), also slots per level (redundant)
@@ -77,6 +70,6 @@ export const npcSlice = createSlice({
   }
 })
 
-export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc } = npcSlice.actions
+export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass } = npcSlice.actions
 
 export default npcSlice.reducer

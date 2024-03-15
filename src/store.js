@@ -1,5 +1,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";;
 import spellbookReducer from "./features/spellbook/spellbookSlice";
+import npcReducer from "./features/npcs/NpcSlice";
+import npcsReducer from "./features/npcs/NpcsSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
@@ -15,7 +17,9 @@ import {
 
 
 const reducers = combineReducers({
-  spellbook: spellbookReducer
+  spellbook: spellbookReducer,
+  npc: npcReducer,
+  npcs: npcsReducer
 })
 
 const persistConfig = {

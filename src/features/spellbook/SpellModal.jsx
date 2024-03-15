@@ -1,5 +1,6 @@
 import { default as db } from "../../utilities/db.mjs";
 import { Modal, View, Text, TouchableOpacity, ScrollView } from "react-native";
+import classNames from "../../utilities/classNames.mjs";
 import { Picker } from "@react-native-picker/picker";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,9 +12,6 @@ export default function SpellModal({ navigation }) {
   const dispatch = useDispatch()
 
   const { show, spells, swap, filter, clas, filteredSpells } = useSelector(state => state.spellbook.modal)
-
-
-  const classNames = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorceror', 'Warlock', 'Wizard']
 
   // useEffect(() => {
   //   db.getAllSpells()
@@ -43,7 +41,7 @@ export default function SpellModal({ navigation }) {
   const handleClass = (e) => {
     dispatch(updateModal({ 
       clas: e,
-      filter: ['class', ] 
+      filter: ['class', e] 
     }))
     
     // setClass(e)
@@ -53,7 +51,7 @@ export default function SpellModal({ navigation }) {
     console.log(spell)
   }
 
-  console.log(filteredSpells, 's/b single spell')
+  // console.log(filteredSpells, 's/b single spell')
 
   return (
     <Modal

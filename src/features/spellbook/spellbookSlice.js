@@ -5,6 +5,18 @@ export const spellbookSlice = createSlice({
   name: 'spellbook',
   initialState: {
     spells: [ wizardSpell ],
+    spellsByLevel: {
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+      7: [],
+      8: [],
+      9: []
+    },
     filteredSpells: [ wizardSpell ],
     modal: {
       show: false,
@@ -13,12 +25,14 @@ export const spellbookSlice = createSlice({
       swap: true,
       //Modal filter will include all items where item[filter[0]] === filter[1]
       filter: ['', undefined],
-      clas: 'All' 
+      clas: 'All',
     }
   },
   reducers: {
+    //loads alll expanded spells into this state
     loadSpellbook: (state, action) => {
       state.spells = action.payload
+      console.log(state.spells[0], "first spell or set of spells")
     },
     toggleModal: state => {
       state.modal.show = !state.modal.show
@@ -28,6 +42,7 @@ export const spellbookSlice = createSlice({
         state.modal[key] = action.payload[key]
       })
     },
+    //e.g. "Where 'class' === 'wizard'" filter looks like ['class', 'wizard']
     filterSpells: (state, action) => {
       const filtered = state.spells.slice(0).filter(spell => spell[action.payload[0]] === action.payload[1])
       state.filteredSpells = filtered
@@ -45,6 +60,9 @@ export const spellbookSlice = createSlice({
     filterModalByLevel: (state, action) => {
       const filteredByLevel = state.spells.filter(spell => (spell.level === parseInt(action.payload)))
       state.modal.spells = filteredByLevel
+    },
+    randomizeSpells: () => {
+      
     }
   },
 })

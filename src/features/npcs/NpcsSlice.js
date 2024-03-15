@@ -16,3 +16,7 @@ export const npcsSlice = createSlice({
     }
   }
 })
+
+export const { loadNpcs, addNpc } = npcsSlice.actions
+
+export default npcsSlice.reducer
