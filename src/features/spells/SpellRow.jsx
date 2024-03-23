@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 export default function SpellRow({ spell, navigation }){
 
-  //TODO: navigate to "spell" screen, passing spell namne as title and spell info as data
+  //TODO: navigate to "spell" screen, passing spell name as title and spell info as data
 
   const handleSpell = () => {
     () => {}

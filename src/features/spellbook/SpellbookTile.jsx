@@ -9,9 +9,32 @@ import ClickableSpell from "../../components/ClickableSpell";
 import Button from "../../components/Button";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level, spells, spellsKnown, remaining, setRemaining, navigation, relevantLevels, spellSlots, npcSpells, setNpcSpells, showModal, setShowModal, modalSpells, setModalSpells, modalOnPress, setModalOnPress, setFilter, setModalClass, modalClass, clas }) {
+export default function SpellbookTile({
+  level,
+  spells,
+  spellsKnown,
+  remaining,
+  setRemaining,
+  navigation,
+  relevantLevels,
+  spellSlots,
+  npcSpells,
+  setNpcSpells,
+  showModal,
+  setShowModal,
+  modalSpells,
+  setModalSpells,
+  modalOnPress,
+  setModalOnPress,
+  setFilter,
+  setModalClass,
+  modalClass,
+  clas
+}) {
 
   const dispatch = useDispatch()
+
+
 
   //TODO: decrement remaining spells once they're assigned
 
@@ -21,7 +44,7 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
   //   level === 0 ? spells.length :
   //   level === 1 ? remaining - (relevantLevels.length - 1 * 2)
   //   : 2)
-  
+
   //   useEffect(() => {
   //   const promises = spells.map(spell => (
   //     db.getSpell(spell.index)
@@ -34,11 +57,11 @@ export default function SpellbookTile({ level, spells, spellsKnown, remaining, s
   //     })
   // }, [max])
 
-    // useEffect(() => {
-    //   const spellsInBag = [...npcSpells]
-    //   spellsInBag[level] = randomSpells
-    //   setNpcSpells(spellsInBag)
-    // }, [randomSpells])
+  // useEffect(() => {
+  //   const spellsInBag = [...npcSpells]
+  //   spellsInBag[level] = randomSpells
+  //   setNpcSpells(spellsInBag)
+  // }, [randomSpells])
 
   // const reShuffle = () => {
   //   setRandomSpells(p.distributeSpells(allSpells, level === 0 ? spellsKnown.cantrips_known : max))

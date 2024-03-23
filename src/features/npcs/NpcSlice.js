@@ -11,7 +11,7 @@ export const fetchPrepared = createAsyncThunk(
     console.log(payload, 'passed to fetchPrepared')
     const { clas, level } = payload
     const prepared = await db.getLevelInfo(clas, level)
-    console.log(prepared, "s/b spellcasting info")
+    state.spellcastingInfo = prepared
     //TODO: put this into a builder under extraReducers and use it to update my prepared/slot info in state
   }
 )
