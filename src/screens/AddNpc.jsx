@@ -190,7 +190,7 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleSubrace = (e) => {
-    const race = races.filter(race => (race.name === e))[0]
+    const race = races.filter(race => (race.name === form.race))[0]
     const subrace = race.subraces.find(sub => (sub.name === e))
     dispatch(updateModifiers({ subrace: subrace }))
     setForm({ ...form, subrace: e })

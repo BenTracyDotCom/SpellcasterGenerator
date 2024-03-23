@@ -45,14 +45,14 @@ const parsers = {
       } else {
         if (key === '2') {
           //Variant human: +1 to spellcasting stat and CON
-          modifiers.castingModifier++
+          modifiers[castingAbility]++
           modifiers.con++
         } else if (key === '1') {
           //Half-elf: +1 to either spellcasting stat or CON
-          if (castingModifier === 'cha') {
+          if (castingAbility === 'cha') {
             modifiers.con++
           } else {
-            modifiers.castingModifier++
+            modifiers[castingAbility]++
           }
         }
       }
