@@ -23,7 +23,6 @@ export const npcSlice = createSlice({
   initialState: {
     //Expanded class info
     classes: [],
-    clas: {},
     //Numbers with indexes corresponding to spell level
     slots: [],
     name: '',

@@ -27,11 +27,8 @@ export default function AddNpc({ navigation }) {
     subrace: races[0].subraces[0].name,
     clas: 'Bard',
     level: '1',
+    //TODO: change this with class either here or in slice
     spellcastingAbility: 'cha',
-    modifiers: {},
-    spellsKnown: {},
-    spells: [],
-    prepared: 4,
     proficiency: 2,
   })
 
@@ -124,7 +121,7 @@ export default function AddNpc({ navigation }) {
   const handleClass = (e) => {
     //TODO: have this update redux state
     dispatch(updateClass(e))
-    dispatch(updateModifiers({ clas: e }))
+    //dispatch(updateModifiers({ clas: e }))
     // dispatch(resetSpellcasting())
     dispatch(updateSpellcasting({ clas: e, level: form.level }))
     setForm({ ...form, clas: e })
@@ -145,8 +142,10 @@ export default function AddNpc({ navigation }) {
   const handleSpells = () => {
     dispatch(fetchSpells(form.clas))
     //Update modifiers one last time so that they're not empty
-    dispatch(updateModifiers())
+    //TODO: Fix this function
+    //dispatch(updateModifiers())
     // Navigate to "Spellbook" page, where we'll complete entry
+    dispatch(updateNpc(form))
     navigation.navigate("Spellbook", {
       spells: spells,
       spellSlots: slots,

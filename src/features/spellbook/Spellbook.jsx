@@ -24,7 +24,7 @@ export default function Spellbook({ route, navigation }) {
   // const [ modalSpells, setModalSpells ] = useState([])
   // const [ modalClass, setModalClass ] = useState(npc.clas)
 
-  // const relevantLevels = spells.slice(0, spellSlots.length)
+  const relevantLevels = slots.slice(0, spellSlots.indexOf(0))
 
   /*
   npc: {
@@ -53,7 +53,7 @@ export default function Spellbook({ route, navigation }) {
       />
       <Text>{`Total prepared: ${spellsKnown.spells_known}`}</Text>
       <ScrollView className="my-4">
-        {/* {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile npcSpells={npcSpells} setNpcSpells={setNpcSpells} spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} remaining={remaining} setRemaining={setRemaining} relevantLevels={relevantLevels} spellSlots={spellSlots} showModal={showModal} setShowModal={setShowModal} modalOnPress={modalOnPress} setModalOnPress={setModalOnPress} filter={filter} setFilter={setFilter} setModalSpells={setModalSpells} modalSpells={modalSpells} modalClass={modalClass} setModalClass={setModalClass}/>)) : null} */}
+        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} relevantLevels={relevantLevels} spellSlots={spellSlots} />)) : null}
         <Button text="Save" onPress={handleSave} clas={npc.clas} />
       </ScrollView>
     </SafeAreaView>
