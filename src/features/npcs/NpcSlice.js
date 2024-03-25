@@ -8,13 +8,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const updateSpellcasting = createAsyncThunk(
   'npc/updateSpellcasting',
   async (payload) => {
-    console.log('attempting to update spellcasting' + JSON.stringify(payload))
     const { clas, level } = payload
     const newSpellcasting = await db.getLevelInfo(clas, level)
-    console.log(newSpellcasting, 'what we got from db')
-    console.log('parsing', p.parseSpellsKnown(newSpellcasting, level))
-    state.spellcastingInfo = newSpellcasting
-    state.spellsKnown = p.parseSpellsKnown(newSpellcasting, level)
+    const spellsKnown = p.parseSpellsKnown(newSpellcasting, level)
+    const slots = p.parseSlots(newSpellcasting.spellcasting)
+    return { newSpellcasting, spellsKnown, slots }
   }
 )
 
@@ -70,7 +68,6 @@ export const npcSlice = createSlice({
     },
     //This gives total number of spells/cantrips known (prepared), also slots per level (redundant)
     updateSpellsKnown: (state, action) => {
-      console.log("updating with: " + action)
       const level = action.payload.level ? action.payload.level : state.level
       state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
     },
@@ -88,9 +85,13 @@ export const npcSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(updateSpellcasting.fulfilled, (state) => {
+    builder.addCase(updateSpellcasting.fulfilled, (state, action) => {
       state.error = ''
-      
+      const { newSpellcasting, spellsKnown, slots } = action.payload
+      console.log(slots, 's/b array of nums')
+      state.spellcastingInfo = newSpellcasting
+      state.spellsKnown = spellsKnown
+      state.slots = slots
     })
     builder.addCase(updateSpellcasting.rejected, (state, action) => {
       state.error = action.error

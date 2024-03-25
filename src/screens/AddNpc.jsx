@@ -28,15 +28,15 @@ export default function AddNpc({ navigation }) {
 
   const dispatch = useDispatch()
 
-  const { classes, clas, spellcastingInfo, level, spellsKnown } = useSelector(state => state.npc)
+  const { classes, clas, spellcastingInfo, level, spellsKnown, slots } = useSelector(state => state.npc)
 
   const [form, setForm] = useState({
     name: '',
     race: race.name,
     subrace: subrace.name,
-    clas: 'Cleric',
+    clas: 'Bard',
     level: '1',
-    spellcastingAbility: 'wis',
+    spellcastingAbility: 'cha',
     modifiers: {},
     spellsKnown: {},
     spells: [],
@@ -74,82 +74,14 @@ export default function AddNpc({ navigation }) {
       })
   }, [dispatch])
 
-  useEffect(() => {
-    if (spellcastingInfo) {
-      dispatch(updateSlots({ spellcastingInfo: spellcastingInfo }))
-      dispatch(updateSpellsKnown({ spellcastingInfo: spellcastingInfo }))
-    }
-  }, [spellcastingInfo])
+  // useEffect(() => {
+  //   if (spellcastingInfo) {
+  //     console.log(slots, 'slots')
+  //     dispatch(updateSlots({ spellcastingInfo: spellcastingInfo }))
+  //     dispatch(updateSpellsKnown({ spellcastingInfo: spellcastingInfo }))
+  //   }
+  // }, [spellcastingInfo])
 
-  //This function will take in the changed data and update eeeverything associated with it - modifiers, spell slots, spellbooks, prepared spells/cantrips
-  // const updateModifiers = (clas, race, subrace, level, passedClasses) => {
-
-  //   /* Dispatch action requires:
-  //      {
-  //       clas: 'Name',
-  //       race: 'Name' 
-  //          OR
-  //       subrace: {
-  //         name: 'Name'
-  //         modifiers: {}
-  //       }
-  //       level: '1'
-  //      }
-  //   */
-
-  //   clas = clas || form.clas
-  //   race = race || form.race
-  //   subrace = subrace || form.subrace
-  //   level = level || form.level
-  //   passedClasses = passedClasses || classes
-
-
-  //   //Gets and sorts all expanded spell info into an array of arrays with index corresponding to spell level (0 = cantrip)
-  //   //TODO: Get simplified spells instead of full, expanded spells
-  //   db.getSpells(p.toIndex(clas)).then((data) => {
-
-  //     dispatch(updateSpells(p.parseSpellsIntoSlots(data)))
-  //     setSpells(p.parseSpellsIntoSlots(data));
-  //   })
-
-  //   //Gets level-specific spellcasting info for this class
-  //   db.getSpellcastingInfo(p.toIndex(clas), parseInt(level))
-  //     .then(spellcastingInfo => {
-
-  //       dispatch(updateSlots(spellcastingInfo))
-  //       dispatch(updateSpellsKnown(spellcastingInfo))
-
-  //       // { cantrips_known: num,
-  //       //   spell_slots_level_x: num,
-  //       //   ...
-  //       //   spells_known?: num,
-  //       //   (added by function if not available)    
-  //       // }
-
-  //       //Adds spells_known if dependent on level + modifier
-  //       const spellsKnown = p.parseSpellsKnown(spellcastingInfo, level)
-  //       setSpellsKnown(spellsKnown)
-
-  //       //Returns an array with indexes corresponding to spell levels:
-  //       //[3, 3, 2] = 3 level 1 slots, 3 level 2 slots, 2 level 3...
-  //       setSpellSlots(p.parseSlots(spellcastingInfo))
-  //       const expandedClass = passedClasses.find(entry => (entry.name))
-
-  //       const castingAbility = expandedClass.spellcasting.spellcasting_ability.index
-
-  //       const expandedSubrace = races.find(raceObj => (raceObj.name === race))
-  //         .subraces.find(subraceObj => (subraceObj.name === subrace))
-
-  //       const parsedModifiers = p.parseModifiers(castingAbility, expandedSubrace)
-
-  //       //Update modifiers
-  //       setModifiers(parsedModifiers)
-  //     })
-  //     .catch(err => {
-  //       console.log("Error updating modifiers: ", err)
-  //     })
-
-  // }
 
   const handleName = (e) => {
     if (e) {
@@ -163,9 +95,10 @@ export default function AddNpc({ navigation }) {
   const handleRace = (e) => {
 
     const race = races.filter(race => (race.name === e))[0]
-    //updateModifiers(null, e, race.subraces[0].name)
 
     //Updade pertinent info in state ("race" will be updated in state once we upload remaining form data)
+
+    //TODO: do this ONCE at screen change
     dispatch(updateModifiers({ subrace: race.subraces[0] }))
 
     //Form logic
@@ -183,6 +116,7 @@ export default function AddNpc({ navigation }) {
       setForm({ ...form, race: e, subrace: subrace })
 
       //Spellcaster logic
+      //TODO: do this ONCE at screen change
       dispatch(updateModifiers({ subrace: race.subraces[0] }))
     }
 
@@ -214,7 +148,8 @@ export default function AddNpc({ navigation }) {
         lvl >= 9 && lvl < 13 ? 4 :
           lvl >= 13 && lvl < 17 ? 5 : 6
     setForm({ ...form, level: e, proficiency: proficiency })
-    dispatch(updateModifiers({ level: e }))
+    dispatch(updateSpellcasting({clas: form.clas, level: e}))
+    //dispatch(updateModifiers({ level: e }))
   }
 
   const handleSpells = (e) => {
@@ -260,11 +195,15 @@ export default function AddNpc({ navigation }) {
         ))}
       </Picker>
 
-      {spellSlots ? spellSlots.map((slot, i) => (
+      {slots ? slots.map((slot, i) => {
+        if(i > 0 && slot > 0){
+          return (
         <View key={i} className="mx-auto">
           <Text>{`Level ${i} slots: ${slot}`}</Text>
         </View>
-      )) : null}
+          )
+        }
+}) : null}
 
       <Button text="Spells" onPress={handleSpells} />
 
