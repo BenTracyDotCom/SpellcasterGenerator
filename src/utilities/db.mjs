@@ -121,6 +121,7 @@ const db = {
   },
 
   getSpells: async function (clas) {
+    console.log('getting spells...')
     return AsyncStorage.getItem(clas.index ? clas.index + '-spells' : clas + '-spells')
       .then((spells) => (
         JSON.parse(spells)

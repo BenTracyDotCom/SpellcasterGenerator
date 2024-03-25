@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadSpellbook } from '../features/spellbook/spellbookSlice';
+import { loadSpellbook, fetchSpells } from '../features/spellbook/spellbookSlice';
 import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
@@ -53,14 +53,13 @@ export default function AddNpc({ navigation }) {
               const loadedClasses = data.map(store => (JSON.parse(store[1])))
               dispatch(loadClasses(loadedClasses))
               dispatch(updateClass(loadedClasses[0]))
+              dispatch(fetchSpells())
               //setClasses(loadedClasses)
               //setClas(loadedClasses[0])
               setForm({ ...form, clas: loadedClasses[0].name })
               // updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
               AsyncStorage.setItem('classesLoaded', 'true')
             })
-        } else {
-
         }
       })
   }, [dispatch])
@@ -143,7 +142,8 @@ export default function AddNpc({ navigation }) {
     //dispatch(updateModifiers({ level: e }))
   }
 
-  const handleSpells = (e) => {
+  const handleSpells = () => {
+    dispatch(fetchSpells(form.clas))
     //Update modifiers one last time so that they're not empty
     dispatch(updateModifiers())
     // Navigate to "Spellbook" page, where we'll complete entry
@@ -185,10 +185,10 @@ export default function AddNpc({ navigation }) {
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
-
+{ spellcastingInfo ? 
       <View>
         {spellcastingInfo.spellcasting.cantrips_known ?
-          <Text className="mx-auto">{`Cantrips known: ${spellcastingInfo.spellcasting.cantrips_known}`}</Text>
+          <Text className="mx-auto">{`Cantrips known: ${slots[0]}`}</Text>
           : null}
         {slots ? slots.map((slot, i) => {
           if (i > 0 && slot > 0) {
@@ -197,7 +197,7 @@ export default function AddNpc({ navigation }) {
             )
           }
         }) : null}
-      </View>
+      </View> : null}
 
       <Button text="Spells" onPress={handleSpells} />
 

@@ -50,7 +50,7 @@ export const npcSlice = createSlice({
     },
     updateClass: (state, action) => {
       const newClas = state.classes.find(clas => (clas.name === action.payload))
-      
+
     },
     updateModifiers: (state, action) => {
       const name = action.payload && action.payload.clas ? action.payload.clas : state.clas
@@ -88,7 +88,6 @@ export const npcSlice = createSlice({
     builder.addCase(updateSpellcasting.fulfilled, (state, action) => {
       state.error = ''
       const { newSpellcasting, spellsKnown, slots } = action.payload
-      console.log(slots, 's/b array of nums')
       state.spellcastingInfo = newSpellcasting
       state.spellsKnown = spellsKnown
       state.slots = slots

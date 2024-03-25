@@ -5,22 +5,17 @@ const parsers = {
     slotInfo.forEach(slot => {
       slots[parseInt(slot.slice(-1))] = spellcastingInfo[slot]
     })
+    slots[0] = spellcastingInfo.cantrips_known
     return slots
   },
 
   parseSpellsKnown: (spellObj, level) => {
-    const modifier = 
-    level < 4 ? 3 : 
-    //Assuming bumping up ability score from 16 to 18 at level 4, 19 at 8, 20 at 12
-    level < 12 >= 4 ? 4 : 5
-    /*
-    { cantrips_known: num,
-      spell_slots_level_x: num,
-      ...
-      spells_known?: num,  
-    }
-    */
+    //Adds spells_known field if dependent on level, modifier
     if (!spellObj.spells_known) {
+      const modifier =
+        level < 4 ? 3 :
+          //Assuming bumping up ability score from 16 to 18 at level 4, 19 at 8, 20 at 12
+          level < 12 >= 4 ? 4 : 5
       spellObj.spells_known = parseInt(level) + parseInt(modifier)
     }
     return spellObj
@@ -63,8 +58,8 @@ const parsers = {
         modifiers[key] = Math.floor((modifiers[key] - 10) / 2)
       }
     })
-    modifiers[castingAbility] =  level < 4 ? 3 : level < 12 >= 4 ? 4 : 5
-    modifiers.con += (level > 7 && level < 12 ? 1 : level >= 12 ? 2 : 0 )
+    modifiers[castingAbility] = level < 4 ? 3 : level < 12 >= 4 ? 4 : 5
+    modifiers.con += (level > 7 && level < 12 ? 1 : level >= 12 ? 2 : 0)
     return modifiers
   },
 
@@ -73,22 +68,10 @@ const parsers = {
     return formattedString;
   },
 
-  parseSpellsIntoSlots: (spells) => {
-    const parsed = [];
-
-    Object.keys(spells).forEach(key => {
-
-      if (parseInt(key.slice(-1)) !== NaN) {
-        parsed[parseInt(key.slice(-1))] = spells[key]
-      }
-    })
-    return parsed
-  },
-
   distributeSpells: (spells, prepared) => {
     const mutableSpells = spells.slice(0)
     const toReturn = []
-    for(let i = 0; i < prepared; i ++){
+    for (let i = 0; i < prepared; i++) {
       const indexToRemove = Math.floor(Math.random() * (spells.length - i))
       let randomSpell = mutableSpells.splice(indexToRemove, 1)[0]
       toReturn.push(randomSpell)

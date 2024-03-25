@@ -16,6 +16,7 @@ export default function Spellbook({ route, navigation }) {
 
 
   const { spells, spellSlots, spellsKnown, npc } = route.params
+  const { slots } = useSelector(state => state.npc)
   // const [ remaining, setRemaining ] = useState(spellsKnown.spells_known)
   // const [ npcSpells, setNpcSpells ] = useState([])
   // const [ filter, setFilter ] = useState(() => (spell) => (spell?.concentration))

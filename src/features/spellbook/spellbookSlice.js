@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import wizardSpell from "../../utilities/wizardSpells";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { default as db } from "../../utilities/db.mjs";
+import { default as p } from "../../utilities/parsers.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const fetchSpells = createAsyncThunk(
   'npc/fetchSpells',
-  async (clas) => {
-    const spells = db.getSpells(clas)
-    //TODO: put this into a builder under extraReducers and use it to update my lil spells array in state
+  async () => {
+    const spells = await db.getSimpleSpells()
+    return spells
   }
 )
 
@@ -63,6 +65,11 @@ export const spellbookSlice = createSlice({
       
     }
   },
+  extraReducers: (builder) => {
+    builder.addCase(fetchSpells.fulfilled, (state, action) => {
+      state.spells = action.payload
+    })
+  }
 })
 
 export const { loadSpellbook, toggleModal, updateModal, filterSpells, filterModalSpells, filterModalByClass, filterModalByLevel } = spellbookSlice.actions
