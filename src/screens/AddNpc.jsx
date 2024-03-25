@@ -14,26 +14,17 @@ import { default as p } from '../utilities/parsers.mjs';
 export default function AddNpc({ navigation }) {
 
   const [name, setName] = useState('New NPC')
-  //const [classes, setClasses] = useState([])
-  //const [clas, setClas] = useState({})
-  const [race, setRace] = useState(races[0])
-  //const [spellsKnown, setSpellsKnown] = useState()
-  const [subrace, setSubrace] = useState(races[0].subraces[0])
   const [subraces, setSubraces] = useState(races[0].subraces)
   const [hasSubraces, setHasSubraces] = useState(true)
-  const [spells, setSpells] = useState({})
-  const [spellSlots, setSpellSlots] = useState([])
-  const [error, setError] = useState('')
-  const [modifiers, setModifiers] = useState({})
 
   const dispatch = useDispatch()
 
-  const { classes, clas, spellcastingInfo, level, spellsKnown, slots } = useSelector(state => state.npc)
+  const { classes, clas, level, spellcastingInfo, spellsKnown, slots, spells, modifiers } = useSelector(state => state.npc)
 
   const [form, setForm] = useState({
     name: '',
-    race: race.name,
-    subrace: subrace.name,
+    race: races[0].name,
+    subrace: races[0].subraces[0].name,
     clas: 'Bard',
     level: '1',
     spellcastingAbility: 'cha',
@@ -148,7 +139,7 @@ export default function AddNpc({ navigation }) {
         lvl >= 9 && lvl < 13 ? 4 :
           lvl >= 13 && lvl < 17 ? 5 : 6
     setForm({ ...form, level: e, proficiency: proficiency })
-    dispatch(updateSpellcasting({clas: form.clas, level: e}))
+    dispatch(updateSpellcasting({ clas: form.clas, level: e }))
     //dispatch(updateModifiers({ level: e }))
   }
 
@@ -158,7 +149,7 @@ export default function AddNpc({ navigation }) {
     // Navigate to "Spellbook" page, where we'll complete entry
     navigation.navigate("Spellbook", {
       spells: spells,
-      spellSlots: spellSlots,
+      spellSlots: slots,
       spellsKnown: spellsKnown,
       npc: { ...form, modifiers: modifiers }
     })
@@ -195,15 +186,18 @@ export default function AddNpc({ navigation }) {
         ))}
       </Picker>
 
-      {slots ? slots.map((slot, i) => {
-        if(i > 0 && slot > 0){
-          return (
-        <View key={i} className="mx-auto">
-          <Text>{`Level ${i} slots: ${slot}`}</Text>
-        </View>
-          )
-        }
-}) : null}
+      <View>
+        {spellcastingInfo.spellcasting.cantrips_known ?
+          <Text className="mx-auto">{`Cantrips known: ${spellcastingInfo.spellcasting.cantrips_known}`}</Text>
+          : null}
+        {slots ? slots.map((slot, i) => {
+          if (i > 0 && slot > 0) {
+            return (
+              <Text key={i} className="mx-auto">{`Level ${i} slots: ${slot}`}</Text>
+            )
+          }
+        }) : null}
+      </View>
 
       <Button text="Spells" onPress={handleSpells} />
 
