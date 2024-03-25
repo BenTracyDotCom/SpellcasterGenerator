@@ -31,6 +31,7 @@ export default function SpellbookTile({
   modalClass,
   clas
 }) {
+  //This component should list a certain number of spells of its passed level. By default, each level should start with 2 spells. 
 
   const dispatch = useDispatch()
 

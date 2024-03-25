@@ -11,8 +11,8 @@ import { toggleModal } from "./spellbookSlice";
 export default function Spellbook({ route, navigation }) {
 
   const dispatch = useDispatch()
-  const showModal = useSelector(state => state.spellbook.showModal)
-  const setShowModal = dispatch(toggleModal())
+  // const showModal = useSelector(state => state.spellbook.showModal)
+  // const setShowModal = dispatch(toggleModal())
 
 
   const { spells, spellSlots, spellsKnown, npc } = route.params

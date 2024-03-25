@@ -11,8 +11,8 @@ export const fetchPrepared = createAsyncThunk(
     console.log(payload, 'passed to fetchPrepared')
     const { clas, level } = payload
     const prepared = await db.getLevelInfo(clas, level)
+    console.log(prepared, 'prepared')
     state.spellcastingInfo = prepared
-    //TODO: put this into a builder under extraReducers and use it to update my prepared/slot info in state
   }
 )
 
@@ -68,6 +68,7 @@ export const npcSlice = createSlice({
     },
     //This gives total number of spells/cantrips known (prepared), also slots per level (redundant)
     updateSpellsKnown: (state, action) => {
+      console.log("updating with: " + action)
       const level = action.payload.level ? action.payload.level : state.level
       state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
     },
@@ -80,6 +81,9 @@ export const npcSlice = createSlice({
         state[key] = action.payload[key]
       })
     },
+    resetSpellcasting: (state) => {
+      state.spellcastingInfo = wizardSpellcasting[0]
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPrepared.fulfilled, (state) => {
@@ -92,6 +96,6 @@ export const npcSlice = createSlice({
   }
 })
 
-export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass } = npcSlice.actions
+export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, resetSpellcasting } = npcSlice.actions
 
 export default npcSlice.reducer
