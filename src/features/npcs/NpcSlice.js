@@ -5,14 +5,16 @@ import { default as wizardSpellcasting } from "../../utilities/wizardLevels";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const fetchPrepared = createAsyncThunk(
-  'npc/fetchPrepared',
+export const updateSpellcasting = createAsyncThunk(
+  'npc/updateSpellcasting',
   async (payload) => {
-    console.log(payload, 'passed to fetchPrepared')
+    console.log('attempting to update spellcasting' + JSON.stringify(payload))
     const { clas, level } = payload
-    const prepared = await db.getLevelInfo(clas, level)
-    console.log(prepared, 'prepared')
-    state.spellcastingInfo = prepared
+    const newSpellcasting = await db.getLevelInfo(clas, level)
+    console.log(newSpellcasting, 'what we got from db')
+    console.log('parsing', p.parseSpellsKnown(newSpellcasting, level))
+    state.spellcastingInfo = newSpellcasting
+    state.spellsKnown = p.parseSpellsKnown(newSpellcasting, level)
   }
 )
 
@@ -86,11 +88,11 @@ export const npcSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchPrepared.fulfilled, (state) => {
+    builder.addCase(updateSpellcasting.fulfilled, (state) => {
       state.error = ''
       
     })
-    builder.addCase(fetchPrepared.rejected, (state, action) => {
+    builder.addCase(updateSpellcasting.rejected, (state, action) => {
       state.error = action.error
     })
   }

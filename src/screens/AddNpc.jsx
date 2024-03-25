@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadSpellbook } from '../features/spellbook/spellbookSlice';
-import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, fetchPrepared, resetSpellcasting } from '../features/npcs/NpcSlice'
+import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -201,8 +201,8 @@ export default function AddNpc({ navigation }) {
     //TODO: have this update redux state
     dispatch(updateClass(e))
     dispatch(updateModifiers({ clas: e }))
-    dispatch(resetSpellcasting())
-    dispatch(fetchPrepared({ clas: e, level: form.level }))
+    // dispatch(resetSpellcasting())
+    dispatch(updateSpellcasting({ clas: e, level: form.level }))
     setForm({ ...form, clas: e })
     //updateModifiers(e)
   }
