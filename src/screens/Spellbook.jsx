@@ -1,4 +1,5 @@
 import Spellbook from "../features/spellbook/Spellbook";
+import EditSpells from "../features/spellbook/EditSpells";
 
 import { SafeAreaView, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
@@ -12,7 +13,8 @@ import SpellModal from "../features/spellbook/SpellModal";
 export default function SpellbookScreen({ route, navigation }) {
 
   return (
-    <Spellbook navigation={navigation} route={route}/>
+    // <Spellbook navigation={navigation} route={route}/>
+    <EditSpells navigation={navigation} route={route}/>
   )
 
 }

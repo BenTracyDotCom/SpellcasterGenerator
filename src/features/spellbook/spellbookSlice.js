@@ -61,9 +61,6 @@ export const spellbookSlice = createSlice({
       const filteredByLevel = state.spells.filter(spell => (spell.level === parseInt(action.payload)))
       state.modal.spells = filteredByLevel
     },
-    randomizeSpells: (state, action) => {
-      
-    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSpells.fulfilled, (state, action) => {

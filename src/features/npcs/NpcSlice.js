@@ -5,6 +5,20 @@ import { default as wizardSpellcasting } from "../../utilities/wizardLevels";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+/*
+TODO:
+- Decide how to format spells (I like { 0: [spells], 2: [spells] ...})
+
+- Spellbook editing page will deal with spells from the modal and from this state, so it might be easier for the selector statements to call these 'npcSpells' and those 'modalSpells'
+
+- Write a thunk to take in an arg for number of spells, pull all spells, filter by level, randomize and assign that many random spells to the spell object
+
+- Write an action to take in a new spell, an old spell, and swap the spell in the npc spell opject
+
+- Write an action to keep track of max spells and current spells in the spell object (we can either turn it red on the spellbook page or prevent further spells from being added, the former will be way easier)
+
+*/
+
 export const updateSpellcasting = createAsyncThunk(
   'npc/updateSpellcasting',
   async (payload) => {
@@ -13,6 +27,23 @@ export const updateSpellcasting = createAsyncThunk(
     const spellsKnown = p.parseSpellsKnown(newSpellcasting, level)
     const slots = p.parseSlots(newSpellcasting.spellcasting)
     return { newSpellcasting, spellsKnown, slots }
+  }
+)
+
+export const loadRandomSpells = createAsyncThunk(
+  'npc/loadRandomSpells',
+  async(payload) => {
+    const { slots, clas } = payload
+    const highest = p.findHighestLevel(slots)
+    const simpleSpells = await db.getSimpleSpells()
+    const relevantSpells = simpleSpells.filter(spell => spell.classes.some(classs => classs.name === clas))
+    .filter(spell => spell.level <= highest)
+    console.log(highest, 'highest', clas, ' clas', simpleSpells[0], ' first simple spell', relevantSpells[0], ' first relevant spell')
+
+    const randomSpells = {}
+    for(let i = 0; i < highest; i ++){
+    }
+    return randomSpells
   }
 )
 
@@ -94,6 +125,9 @@ export const npcSlice = createSlice({
     builder.addCase(updateSpellcasting.rejected, (state, action) => {
       state.error = action.error
     })
+    builder.addCase(loadRandomSpells.fulfilled), (state, action) => {
+      state.spellsKnown = action.payload
+    }
   }
 })
 

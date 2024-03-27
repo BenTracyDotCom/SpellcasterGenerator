@@ -77,6 +77,16 @@ const parsers = {
       toReturn.push(randomSpell)
     }
     return toReturn
+  },
+  findHighestLevel: (spells) => {
+    const highest = spells.length - 1
+    for(let i = spells.length - 1; i >= 0 ; i --){
+      if(spells[i]){
+        highest = i
+        break
+      }
+    }
+    return highest
   }
 
 }

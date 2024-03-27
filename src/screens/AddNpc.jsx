@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadSpellbook, fetchSpells } from '../features/spellbook/spellbookSlice';
-import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting } from '../features/npcs/NpcSlice'
+import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting, loadRandomSpells } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
