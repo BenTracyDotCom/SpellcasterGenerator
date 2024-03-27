@@ -39,11 +39,11 @@ export default function SpellModal({ navigation }) {
   // }, [clas])
 
   const handleClass = (e) => {
-    dispatch(updateModal({ 
+    dispatch(updateModal({
       clas: e,
-      filter: ['class', e] 
+      filter: ['class', e]
     }))
-    
+
     // setClass(e)
   }
 
@@ -82,9 +82,9 @@ export default function SpellModal({ navigation }) {
             </ScrollView> */}
           </View>
         </View>
-          <TouchableOpacity onPress={() => { dispatch(toggleModal()) }} className="w-full border-2 rounded-full w-min mx-auto bg-primary">
-            <Text className="text-center">X</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => { dispatch(toggleModal()) }} className="w-full border-2 rounded-full w-min mx-auto bg-primary">
+          <Text className="text-center">X</Text>
+        </TouchableOpacity>
       </View>
     </Modal>
   )
