@@ -70,7 +70,7 @@ export const npcSlice = createSlice({
     spellcastingAbility: 'wis',
     modifiers: {},
     spellsKnown: {},
-    spells: [],
+    spells: {},
     prepared: 4,
     proficiency: 2
   },

@@ -1,10 +1,8 @@
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { store, persistor} from './src/store';
+import { store } from './src/store';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { StatusBar } from 'expo-status-bar';
 import Launch from './src/screens/Launch';
@@ -24,7 +22,6 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
           <Stack.Navigator
           initialRouteName="Loading">
@@ -59,7 +56,6 @@ export default function App() {
             />
           </Stack.Navigator>
         </NavigationContainer>
-      </PersistGate>
     </Provider>
   );
 }

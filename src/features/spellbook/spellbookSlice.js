@@ -16,7 +16,7 @@ export const fetchSpells = createAsyncThunk(
 export const spellbookSlice = createSlice({
   name: 'spellbook',
   initialState: {
-    //This will hold a 3d array of simple versions of all spells
+    //This will hold a 3D array of simple versions of all spells
     spells: [ wizardSpell ],
     filteredSpells: [ wizardSpell ],
     modal: {

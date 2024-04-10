@@ -145,6 +145,7 @@ export default function AddNpc({ navigation }) {
     //TODO: Fix this function
     //dispatch(updateModifiers())
     // Navigate to "Spellbook" page, where we'll complete entry
+    dispatch(loadRandomSpells())
     dispatch(updateNpc(form))
     navigation.navigate("Spellbook", {
       spells: spells,
@@ -199,7 +200,6 @@ export default function AddNpc({ navigation }) {
       </View> : null}
 
       <Button text="Spells" onPress={handleSpells} />
-
 
     </View>
   )
