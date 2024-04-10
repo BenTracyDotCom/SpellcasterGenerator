@@ -19,7 +19,9 @@ export default function AddNpc({ navigation }) {
 
   const dispatch = useDispatch()
 
-  const { classes, clas, level, spellcastingInfo, spellsKnown, slots, spells, modifiers } = useSelector(state => state.npc)
+  const { clas, level, spellcastingInfo, spellsKnown, slots, spells, modifiers } = useSelector(state => state.npc)
+
+  const [classes, setClasses] = useState([])
 
   const [form, setForm] = useState({
     name: '',
@@ -42,22 +44,18 @@ export default function AddNpc({ navigation }) {
             .then(spells => dispatch(loadSpellbook(spells)))
         }
       })
-    AsyncStorage.getItem('classesLoaded')
+    AsyncStorage.multiGet(classNames)
       .then(data => {
-        if (!data) {
-          AsyncStorage.multiGet(classNames)
-            .then(data => {
-              const loadedClasses = data.map(store => (JSON.parse(store[1])))
-              dispatch(loadClasses(loadedClasses))
-              dispatch(updateClass(loadedClasses[0]))
-              dispatch(fetchSpells())
-              //setClasses(loadedClasses)
-              //setClas(loadedClasses[0])
-              setForm({ ...form, clas: loadedClasses[0].name })
-              // updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
-              AsyncStorage.setItem('classesLoaded', 'true')
-            })
-        }
+       //console.log(JSON.parse(data[0][1]).name)
+        const loadedClasses = data.map(store => (JSON.parse(store[1])))
+        dispatch(loadClasses(loadedClasses))
+        dispatch(updateClass(loadedClasses[0]))
+        dispatch(fetchSpells())
+        setClasses(loadedClasses)
+        //setClas(loadedClasses[0])
+        setForm({ ...form, clas: loadedClasses[0].name })
+        // updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
+        AsyncStorage.setItem('classesLoaded', 'true')
       })
   }, [dispatch])
 
@@ -185,19 +183,19 @@ export default function AddNpc({ navigation }) {
           <Picker.Item label={i + 1} value={i + 1} key={val} />
         ))}
       </Picker>
-{ spellcastingInfo ? 
-      <View>
-        {spellcastingInfo.spellcasting.cantrips_known ?
-          <Text className="mx-auto">{`Cantrips known: ${slots[0]}`}</Text>
-          : null}
-        {slots ? slots.map((slot, i) => {
-          if (i > 0 && slot > 0) {
-            return (
-              <Text key={i} className="mx-auto">{`Level ${i} slots: ${slot}`}</Text>
-            )
-          }
-        }) : null}
-      </View> : null}
+      {spellcastingInfo ?
+        <View>
+          {spellcastingInfo.spellcasting.cantrips_known ?
+            <Text className="mx-auto">{`Cantrips known: ${slots[0]}`}</Text>
+            : null}
+          {slots ? slots.map((slot, i) => {
+            if (i > 0 && slot > 0) {
+              return (
+                <Text key={i} className="mx-auto">{`Level ${i} slots: ${slot}`}</Text>
+              )
+            }
+          }) : null}
+        </View> : null}
 
       <Button text="Spells" onPress={handleSpells} />
 
