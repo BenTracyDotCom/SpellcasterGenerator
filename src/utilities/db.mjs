@@ -76,6 +76,7 @@ const db = {
   storeSimpleSpells: async function (cb) {
     await api.fetchSimpleSpells(cb)
       .then(res => {
+        console.log("looking for my light spell -> ", JSON.stringify(res.data.spells.find(spell => spell.index === 'light')))
         return AsyncStorage.setItem("simpleSpells", JSON.stringify(res.data.spells))
       }
       )

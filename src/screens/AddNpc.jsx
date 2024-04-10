@@ -46,16 +46,12 @@ export default function AddNpc({ navigation }) {
       })
     AsyncStorage.multiGet(classNames)
       .then(data => {
-       //console.log(JSON.parse(data[0][1]).name)
         const loadedClasses = data.map(store => (JSON.parse(store[1])))
         dispatch(loadClasses(loadedClasses))
         dispatch(updateClass(loadedClasses[0]))
         dispatch(fetchSpells())
         setClasses(loadedClasses)
-        //setClas(loadedClasses[0])
         setForm({ ...form, clas: loadedClasses[0].name })
-        // updateModifiers(loadedClasses[0].name, form.race, form.subrace, form.level, loadedClasses)
-        AsyncStorage.setItem('classesLoaded', 'true')
       })
   }, [dispatch])
 

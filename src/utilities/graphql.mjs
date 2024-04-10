@@ -40,8 +40,8 @@ query ClassSpellsByLevel($index: String) {
 `;
 
 const simpleSpellsQuery = gql`
-query simpleSpellsQuery {
-  spells {
+query simpleSpellsQuery($limit: Int!) {
+  spells(limit: $limit) {
     name
     level
     index

@@ -66,7 +66,7 @@ export default function SpellbookTile({ level }) {
         <Text>
           {JSON.stringify(spells.filter(spell => (spell.level === level && spell.classes.some(classs => classs.name === clas))).map(spell => spell.name))}
         </Text>
-          <Text>{JSON.stringify(spells.filter(spell => spell.index === 'mage-hand'))}</Text>
+          {/* <Text>{JSON.stringify(spells.filter(spell => spell.index === 'mage-hand'))}</Text> */}
       </TouchableOpacity>
       {/* <TileHeader level={level} max={max} setMax={setMax} spellSlots={spellSlots[level]} reShuffle={reShuffle} />
       {randomSpells.length ? randomSpells.map((spell, i) => (

@@ -67,9 +67,21 @@ const api = {
       },
       body: JSON.stringify({
         query: print(gql.simpleSpellsQuery),
+        variables: { limit: 400 }
       })
     })
       .then(res => (res.json()))
+    // return fetch(this.graphqlEndpoint, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     query: print(gql.simpleSpellsQuery),
+    //   })
+    // })
+    //   .then(res => (res.json()))
   },
   expandSpells: async function (spells, cb) {
     cb('Expanding spell data...')
@@ -82,4 +94,4 @@ const api = {
 
 export default api
 
-api.fetchSpellsByClass('cleric')
+//api.fetchSpellsByClass('cleric')
