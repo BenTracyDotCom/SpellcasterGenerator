@@ -9,12 +9,11 @@ import ClickableSpell from "../../components/ClickableSpell";
 import Button from "../../components/Button";
 //import SpellRow from "../spells/SpellRow";
 
-export default function SpellbookTile({ level }) {
+export default function SpellbookTile({ level, navigation }) {
   //This component should list a certain number of spells of its passed level. By default, each level should start with 2 spells. 
 
   const dispatch = useDispatch()
-  const { spells } = useSelector(state => state.spellbook)
-  const { clas } = useSelector(state => state.npc)
+  const { spells } = useSelector(state => state.npc)
 
 
 
@@ -62,10 +61,11 @@ export default function SpellbookTile({ level }) {
   return (
     <View>
       <TouchableOpacity onPress={() => {dispatch(toggleModal())}}>
-        <Text>{`Level ${level} Spell Tile Here`}</Text>
-        <Text>
-          {JSON.stringify(spells.filter(spell => (spell.level === level && spell.classes.some(classs => classs.name === clas))).map(spell => spell.name))}
-        </Text>
+        <Text>{`Level ${level} Spells`}</Text>
+          {spells[level].map(spell => (
+            <ClickableSpell spell={spell} navigation={navigation}/>
+            ))}
+
           {/* <Text>{JSON.stringify(spells.filter(spell => spell.index === 'mage-hand'))}</Text> */}
       </TouchableOpacity>
       {/* <TileHeader level={level} max={max} setMax={setMax} spellSlots={spellSlots[level]} reShuffle={reShuffle} />

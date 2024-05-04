@@ -20,7 +20,7 @@ export default function AddNpc({ navigation }) {
   const dispatch = useDispatch()
 
   const { clas, level, spellcastingInfo, spellsKnown, slots, spells, modifiers } = useSelector(state => state.npc)
-
+  
   const [classes, setClasses] = useState([])
 
   const [form, setForm] = useState({
@@ -139,14 +139,14 @@ export default function AddNpc({ navigation }) {
     //TODO: Fix this function
     //dispatch(updateModifiers())
     // Navigate to "Spellbook" page, where we'll complete entry
-    dispatch(loadRandomSpells())
+    dispatch(loadRandomSpells({ slots: slots, clas: clas }))
     dispatch(updateNpc(form))
-    navigation.navigate("Spellbook", {
-      spells: spells,
-      spellSlots: slots,
-      spellsKnown: spellsKnown,
-      npc: { ...form, modifiers: modifiers }
-    })
+    // navigation.navigate("Spellbook", {
+    //   spells: spells,
+    //   spellSlots: slots,
+    //   spellsKnown: spellsKnown,
+    //   npc: { ...form, modifiers: modifiers }
+    // })
   }
 
   return (

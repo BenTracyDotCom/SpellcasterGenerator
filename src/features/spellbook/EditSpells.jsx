@@ -7,16 +7,36 @@ import SpellbookTile from "./SpellbookTile";
 import Button from "../../components/Button";
 import SpellModal from "./SpellModal";
 import { toggleModal } from "./spellbookSlice";
+import { updateSpells } from "../npcs/NpcSlice";
+import { updateSpellsKnown } from "../npcs/NpcSlice";
 
 export default function EditSpells({ route, navigation }) {
 
   const dispatch = useDispatch()
   // const showModal = useSelector(state => state.spellbook.showModal)
   // const setShowModal = dispatch(toggleModal())
+  
 
 
-  const { spells, spellSlots, spellsKnown, npc } = route.params
-  const { slots } = useSelector(state => state.npc)
+  const { spellSlots, spellsKnown, npc } = route.params
+  const { slots, spells } = useSelector(state => state.npc)
+
+
+  useEffect(() => {
+    const fetchSpells = async () => {
+      const spells = await db.getSimpleSpells()
+      const npcSpells = {}
+      for(let i = 0; i < slots.length; i ++){
+        if(npc.clas.toUpperCase === "WARLOCK" || slots[i]){
+          npcSpells[i] = spells.filter(spell => (parseInt(spell.level) === i) && spell.classes.some(classs => classs.name === npc.clas))
+        } else {
+          break
+        }
+      }
+      dispatch(updateSpells(npcSpells))
+    }
+    fetchSpells()
+  }, (dispatch))
   // const [ remaining, setRemaining ] = useState(spellsKnown.spells_known)
   // const [ npcSpells, setNpcSpells ] = useState([])
   // const [ filter, setFilter ] = useState(() => (spell) => (spell?.concentration))
@@ -53,7 +73,7 @@ export default function EditSpells({ route, navigation }) {
       />
       <Text>{`Total prepared: ${spellsKnown.spells_known}`}</Text>
       <ScrollView className="my-4">
-        {relevantLevels.length ? relevantLevels.map((spells, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} relevantLevels={relevantLevels} spellSlots={spellSlots} />)) : null}
+        {relevantLevels.length ? relevantLevels.map((slots, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} relevantLevels={relevantLevels} spellSlots={spellSlots} />)) : null}
         <Button text="Save" onPress={handleSave} clas={npc.clas} />
       </ScrollView>
     </SafeAreaView>

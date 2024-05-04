@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { default as p } from "../../utilities/parsers.mjs";
 import { default as db } from "../../utilities/db.mjs";
-import { default as wizardSpellcasting } from "../../utilities/wizardLevels";
+import { default as bardLevel } from "../../utilities/bardLevel.mjs";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -49,14 +49,14 @@ export const loadRandomSpells = createAsyncThunk(
 
 export const npcSlice = createSlice({
   name: 'npc',
-  error: '',
-  spellcastingInfo: wizardSpellcasting[0],
   initialState: {
+    error: '',
+    spellcastingInfo: bardLevel,
     //Expanded class info
     classes: [],
     //Numbers with indexes corresponding to spell level
     slots: [],
-    name: '',
+    name: 'New NPC',
     race: 'Dwarf',
     subrace: {
       name: "Hill",
@@ -65,14 +65,15 @@ export const npcSlice = createSlice({
         wis: 1
       }
     },
-    clas: 'Cleric',
+    clas: 'Bard',
     level: '1',
     spellcastingAbility: 'wis',
     modifiers: {},
     spellsKnown: {},
     spells: {},
     prepared: 4,
-    proficiency: 2
+    proficiency: 2,
+    slots: [2, 2]
   },
   reducers: {
     loadClasses: (state, action) => {
