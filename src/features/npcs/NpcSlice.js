@@ -24,7 +24,7 @@ export const updateSpellcasting = createAsyncThunk(
   async (payload) => {
     const { clas, level } = payload
     const newSpellcasting = await db.getLevelInfo(clas, level)
-    const spellsKnown = p.parseSpellsKnown(newSpellcasting, level)
+    const spellsKnown = p.parseSpellsKnown(newSpellcasting.spellcasting, level)
     const slots = p.parseSlots(newSpellcasting.spellcasting)
     return { newSpellcasting, spellsKnown, slots }
   }
@@ -42,6 +42,7 @@ export const loadRandomSpells = createAsyncThunk(
 
     const randomSpells = {}
     for(let i = 0; i < highest; i ++){
+    //TODO: actually load some spells?
     }
     return randomSpells
   }
@@ -73,7 +74,8 @@ export const npcSlice = createSlice({
     spells: {},
     prepared: 4,
     proficiency: 2,
-    slots: [2, 2]
+    slots: [2, 2],
+    spellsReady: false
   },
   reducers: {
     loadClasses: (state, action) => {

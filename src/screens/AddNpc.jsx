@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadSpellbook, fetchSpells } from '../features/spellbook/spellbookSlice';
+import { loadSpellbook, fetchSpells, filterSpells } from '../features/spellbook/spellbookSlice';
 import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting, loadRandomSpells } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
@@ -20,7 +20,7 @@ export default function AddNpc({ navigation }) {
   const dispatch = useDispatch()
 
   const { clas, level, spellcastingInfo, spellsKnown, slots, spells, modifiers } = useSelector(state => state.npc)
-  
+
   const [classes, setClasses] = useState([])
 
   const [form, setForm] = useState({
@@ -134,7 +134,6 @@ export default function AddNpc({ navigation }) {
   }
 
   const handleSpells = () => {
-    dispatch(fetchSpells(form.clas))
     //Update modifiers one last time so that they're not empty
     //TODO: Fix this function
     //dispatch(updateModifiers())
@@ -191,6 +190,7 @@ export default function AddNpc({ navigation }) {
               )
             }
           }) : null}
+          <Text className="mx-auto my-2">{`Total prepared: ${spellcastingInfo.spellcasting.spells_known}`}</Text>
         </View> : null}
 
       <Button text="Spells" onPress={handleSpells} />
