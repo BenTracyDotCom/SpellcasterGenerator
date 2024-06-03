@@ -7,6 +7,7 @@ import SpellbookTile from "./SpellbookTile";
 import Button from "../../components/Button";
 import SpellModal from "./SpellModal";
 import CantripsTile from "./CantripsTile";
+import SpellsByLevel from "./SpellsByLevel";
 import { toggleModal, setRemaining } from "./spellbookSlice";
 import { updateSpells } from "../npcs/NpcSlice";
 import { updateSpellsKnown } from "../npcs/NpcSlice";
@@ -22,7 +23,7 @@ export default function EditSpells({ route, navigation }) {
   //const { spellSlots, spellsKnown, npc } = route.params
   const { slots, spells, spellcastingInfo, spellsKnown, clas } = useSelector(state => state.npc)
 
-  const { remaining } = useSelector(state => state.spellbook)
+  const [remaining, setRemaining ]= useState(spellsKnown.spells_known)
 
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function EditSpells({ route, navigation }) {
       dispatch(updateSpells(npcSpells))
     }
     //TODO: only set this to max if the spellbook is empty
-    dispatch(setRemaining(spellsKnown.spells_known))
+    // dispatch(setRemaining(spellsKnown.spells_known))
     fetchSpells()
   }, [dispatch])
 
@@ -91,22 +92,22 @@ export default function EditSpells({ route, navigation }) {
         {/* {relevantLevels.length ? relevantLevels.map((slots, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} relevantLevels={relevantLevels} spellSlots={spellSlots} />)) : null} */}
         {slots.length ? slots.map((slot, i) => {
           if (i === 0) {
-            return <CantripsTile />
+            return <CantripsTile key="caintrips"/>
           }
           if (slots[i]) {
             return (
-              <View className="flex flex-row justify-between px-5">
-                <Text>{`Level ${i} spells (${slot} slots)`}</Text>
-                <TouchableOpacity className="px-2 py-1 border-2 rounded-lg" style={{ backgroundColor: '#f2ca50' }}>
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </View>
+              <SpellsByLevel level={i} slots={slot} remaining={remaining} setRemaining={setRemaining}/>
+              // <View className="flex flex-row justify-between px-5" key={i}>
+              //   <Text>{`Level ${i} spells (${slot} slots)`}</Text>
+              //   <TouchableOpacity className="px-2 py-1 border-2 rounded-lg" style={{ backgroundColor: '#f2ca50' }}>
+              //     <Text>+</Text>
+              //   </TouchableOpacity>
+              // </View>
             )
           }
         }) : null}
 
         {/* <Text>{JSON.stringify(spells)}</Text> */}
-        <Button text="Lower Remaining" onPress={() => (dispatch(setRemaining(remaining - 1)))} />
         <Button text="Save" onPress={handleSave} />
       </ScrollView>
     </SafeAreaView>

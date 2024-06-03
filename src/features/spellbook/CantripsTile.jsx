@@ -47,19 +47,21 @@ export default function CantripsTile() {
         </TouchableOpacity> : null}
       </View>
       <View className="flex flex-col">
-        {knownCantrips ? knownCantrips.map(cantrip => <View className="flex flex-row px-2 justify-around">
+        {knownCantrips ? knownCantrips.map(cantrip => <View className="flex flex-row px-7 justify-between" key={cantrip.index}>
           <Text>{cantrip.name}</Text>
-          <TouchableOpacity className="rounded-lg px-2 py-1" style={{backgroundColor: 'red'}}
-          onPress={() => deleteCantrip(cantrip)}
-          >
-            <Text className="font-bold">{'-'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-          className="rounded-lg px-2 py-1" style={{backgroundColor: '#f2ca50'}}
-          onPress={() => shuffleCantrip(cantrip)}
-          >
-            <Text>{'< >'}</Text>
-          </TouchableOpacity>
+          <View className="flex flex-row space-x-2">
+            <TouchableOpacity className="rounded-lg px-3 py-1" style={{backgroundColor: 'red'}}
+            onPress={() => deleteCantrip(cantrip)}
+            >
+              <Text className="font-bold">{'-'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            className="rounded-lg px-2 py-1" style={{backgroundColor: '#f2ca50'}}
+            onPress={() => shuffleCantrip(cantrip)}
+            >
+              <Text>{'< >'}</Text>
+            </TouchableOpacity>
+          </View>
         </View>) : null}
       </View>
     </View>
