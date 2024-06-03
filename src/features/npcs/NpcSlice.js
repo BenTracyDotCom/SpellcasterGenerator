@@ -114,6 +114,7 @@ export const npcSlice = createSlice({
     },
     addPrepared: (state, action) => {
       // requires { level: number, spell: obj }
+      const spell = action.payload.spell
       state.prepared[action.payload.level] ? 
       state.prepared[action.payload.level].push(spell) : state.prepared[action.payload.level] = [spell]
     },
