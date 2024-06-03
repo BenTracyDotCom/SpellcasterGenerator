@@ -45,7 +45,7 @@ export default function SpellsByLevel({ level, slots, remaining, setRemaining })
         </TouchableOpacity> : null}
       </View>
       <View className="flex flex-col">
-        {knownSpells ? knownSpells.map(spell => <View className="flex flex-row px-7 justify-between">
+        {knownSpells ? knownSpells.map((spell, i) => <View className="flex flex-row px-7 justify-between" key={i}>
           <Text>{spell.name}</Text>
           <View className="flex flex-row space-x-2">
             <TouchableOpacity className="rounded-lg px-3 py-1" style={{backgroundColor: 'red'}}

@@ -12,11 +12,11 @@ export default function Launch({ navigation }) {
   const [npcs, setNPCs] = useState([])
 
   useEffect(() => {
-    // AsyncStorage.getItem(npcs)
-    // .then(data => {
-    //   console.log(data, "npcs in storage")
-    // })
-  })
+    AsyncStorage.getItem('npcs')
+    .then(data => {
+      setNPCs(JSON.parse(data))
+    })
+  }, [])
 
 
   const handleStorageTest = () => {
@@ -32,7 +32,7 @@ export default function Launch({ navigation }) {
     <View>
       <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
       <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
-      <NpcList npcs={["Jim", "Bim", "Jimself"]} />
+   {npcs ? <NpcList npcs={npcs} /> : null}
       <SpellTile navigation={navigation}/>
     </View>
   )

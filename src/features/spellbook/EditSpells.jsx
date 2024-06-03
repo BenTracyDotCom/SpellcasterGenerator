@@ -8,9 +8,10 @@ import Button from "../../components/Button";
 import SpellModal from "./SpellModal";
 import CantripsTile from "./CantripsTile";
 import SpellsByLevel from "./SpellsByLevel";
-import { toggleModal, setRemaining } from "./spellbookSlice";
+import { toggleModal } from "./spellbookSlice";
 import { updateSpells } from "../npcs/NpcSlice";
 import { updateSpellsKnown } from "../npcs/NpcSlice";
+import { addNpc } from "../npcs/NpcsSlice";
 
 export default function EditSpells({ route, navigation }) {
 
@@ -21,7 +22,8 @@ export default function EditSpells({ route, navigation }) {
 
 
   //const { spellSlots, spellsKnown, npc } = route.params
-  const { slots, spells, spellcastingInfo, spellsKnown, clas } = useSelector(state => state.npc)
+  const npc = useSelector(state => state.npc)
+  const { slots, spells, spellcastingInfo, spellsKnown, clas } = npc
 
   const [remaining, setRemaining ]= useState(spellsKnown.spells_known)
 
@@ -48,15 +50,6 @@ export default function EditSpells({ route, navigation }) {
     fetchSpells()
   }, [dispatch])
 
-  // const [ remaining, setRemaining ] = useState(spellsKnown.spells_known)
-  // const [ npcSpells, setNpcSpells ] = useState([])
-  // const [ filter, setFilter ] = useState(() => (spell) => (spell?.concentration))
-  // const [ modalOnPress, setModalOnPress ] = useState(() => {})
-  // const [ modalSpells, setModalSpells ] = useState([])
-  // const [ modalClass, setModalClass ] = useState(npc.clas)
-
-  //const relevantLevels = slots.slice(0, spellSlots.indexOf(0))
-
   /*
   npc: {
     name: '',
@@ -72,11 +65,10 @@ export default function EditSpells({ route, navigation }) {
   }
   */
 
-  const handleAdd = () => {
-
-  }
 
   const handleSave = () => {
+    dispatch(addNpc(npc))
+    navigation.navigate('Launch')
     //We've finally got all our data consolidated. Make a db function to save the NPC!
   }
 

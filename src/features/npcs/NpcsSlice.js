@@ -11,7 +11,8 @@ export const npcsSlice = createSlice({
       state.npcs = action.payload
     },
     addNpc: (state, action) => {
-      const newNpcs = state.npcs.slice(0).push(action.payload)
+      const newNpcs = state.npcs.slice(0)
+      newNpcs.push(action.payload)
       db.storeNpcs(newNpcs)
     }
   }

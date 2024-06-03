@@ -106,6 +106,12 @@ const db = {
       AsyncStorage.setItem('npcs', JSON.stringify(npcs))
     }
   },
+  getNpcs: async function () {
+    return AsyncStorage.getItem('npcs')
+    .then(npcs => (
+      JSON.parse(npcs)
+    ))
+  },
   getSpellcastingInfo: async function (clas, level) {
     return this.getLevelInfo(clas, level)
       .then(info => {
@@ -135,7 +141,6 @@ const db = {
         JSON.parse(spell)
       ))
   },
-
   getClass: async function (clas) {
     return AsyncStorage.getItem(clas.index ? clas.index : clas)
   }
