@@ -6,7 +6,7 @@ import SpellTile from "../features/spells/SpellTile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-export default function Launch({ navigation }) {
+export default function Launch({ navigation, route }) {
 
   const [npcsLoaded, setNpcsLoaded] = useState(false)
   const [npcs, setNPCs] = useState([])
@@ -32,7 +32,7 @@ export default function Launch({ navigation }) {
     <View>
       <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
       <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
-   {npcs ? <NpcList npcs={npcs} /> : null}
+   {npcs ? <NpcList npcs={npcs} navigation={navigation} route={route}/> : null}
       <SpellTile navigation={navigation}/>
     </View>
   )

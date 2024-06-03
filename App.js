@@ -11,6 +11,7 @@ import Loading from './src/screens/Loading';
 import AddNpc from './src/screens/AddNpc';
 import Spells from './src/screens/Spells';
 import Spell from './src/screens/Spell';
+import Npc from './src/screens/Npc';
 import SpellbookScreen from './src/screens/Spellbook';
 
 const Stack = createNativeStackNavigator();
@@ -53,6 +54,11 @@ export default function App() {
             <Stack.Screen
             name="Add NPC"
             component={AddNpc}
+            />
+            <Stack.Screen
+            name="Npc"
+            component={Npc}
+            options={({ route }) => ({ title: route.params.title})}
             />
           </Stack.Navigator>
         </NavigationContainer>
