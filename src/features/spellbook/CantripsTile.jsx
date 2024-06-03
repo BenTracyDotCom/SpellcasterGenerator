@@ -33,6 +33,11 @@ export default function CantripsTile() {
     dispatch(changePrepared({level: 0, old: old, newSpell: newSpell}))
   }
 
+  const deleteCantrip = (old) => {
+    dispatch(changePrepared({level: 0, old: old}))
+    setRemaining(remaining + 1)
+  }
+
   return (
     <View>
       <View className="flex flex-row justify-between px-5">
@@ -44,7 +49,9 @@ export default function CantripsTile() {
       <View className="flex flex-col">
         {knownCantrips ? knownCantrips.map(cantrip => <View className="flex flex-row px-2 justify-around">
           <Text>{cantrip.name}</Text>
-          <TouchableOpacity className="rounded-lg px-2 py-1" style={{backgroundColor: 'red'}}>
+          <TouchableOpacity className="rounded-lg px-2 py-1" style={{backgroundColor: 'red'}}
+          onPress={() => deleteCantrip(cantrip)}
+          >
             <Text className="font-bold">{'-'}</Text>
           </TouchableOpacity>
           <TouchableOpacity 

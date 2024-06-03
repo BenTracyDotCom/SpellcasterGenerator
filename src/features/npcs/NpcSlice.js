@@ -124,7 +124,11 @@ export const npcSlice = createSlice({
       //Compare indexes at a level to the index of the provided old spell
       const index = state.prepared[level].map(spell => spell.index).indexOf(action.payload.old.index)
       const mutablePrepared = state.prepared[level].slice(0)
-      mutablePrepared.splice(index, 1, action.payload.newSpell)
+      if(action.payload.newSpell) {
+        mutablePrepared.splice(index, 1, action.payload.newSpell)
+      } else {
+        mutablePrepared.splice(index, 1)
+      } 
       state.prepared[level] = mutablePrepared
     },
     updateSpells: (state, action) => {
