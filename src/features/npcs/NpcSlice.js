@@ -7,7 +7,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /*
 TODO:
-- Decide how to format spells (I like { 0: [spells], 2: [spells] ...})
+- Decide how to format spells:
+DONE: 3D array (easier to iterate thru than object, access is similar)
 
 - Spellbook editing page will deal with spells from the modal and from this state, so it might be easier for the selector statements to call these 'npcSpells' and those 'modalSpells'
 
@@ -24,28 +25,35 @@ export const updateSpellcasting = createAsyncThunk(
   async (payload) => {
     const { clas, level } = payload
     const newSpellcasting = await db.getLevelInfo(clas, level)
+    //spellsKnown is an integer representing total prepared spells
     const spellsKnown = p.parseSpellsKnown(newSpellcasting.spellcasting, level)
     const slots = p.parseSlots(newSpellcasting.spellcasting)
     return { newSpellcasting, spellsKnown, slots }
   }
 )
 
-export const loadRandomSpells = createAsyncThunk(
-  'npc/loadRandomSpells',
-  async(payload) => {
+export const loadRelevantSpells = createAsyncThunk(
+  'npc/loadRelevantSpells',
+  async (payload) => {
     const { slots, clas } = payload
     const highest = p.findHighestLevel(slots)
     const simpleSpells = await db.getSimpleSpells()
     const relevantSpells = simpleSpells.filter(spell => spell.classes.some(classs => classs.name === clas))
-    .filter(spell => spell.level <= highest)
+      .filter(spell => spell.level <= highest)
     console.log(highest, 'highest', clas, ' clas', simpleSpells[0], ' first simple spell', relevantSpells[0], ' first relevant spell')
 
-    const randomSpells = {}
-    for(let i = 0; i < highest; i ++){
-    //TODO: actually load some spells?
+    const spells = []
+    for (let i = 0; i < relevantSpells.length; i++) {
+      let spell = relevantSpells[i]
+      randomSpells[spell.level] ? randomSpells[spell.level].push(spell)
+        : randomSpells[spell.level] = [spell]
     }
-    return randomSpells
+    return spells
   }
+)
+
+export const loadClassSpells = createAsyncThunk(
+
 )
 
 export const npcSlice = createSlice({
@@ -71,8 +79,8 @@ export const npcSlice = createSlice({
     spellcastingAbility: 'wis',
     modifiers: {},
     spellsKnown: {},
-    spells: {},
-    prepared: 4,
+    spells: [],
+    prepared: [],
     proficiency: 2,
     slots: [2, 2],
     spellsReady: false
@@ -104,6 +112,18 @@ export const npcSlice = createSlice({
       const level = action.payload.level ? action.payload.level : state.level
       state.spellsKnown = p.parseSpellsKnown(action.payload.spellcastingInfo, level)
     },
+    addPrepared: (state, action) => {
+      // requires { level: number, spell: obj }
+      state.prepared[action.payload.level] ? 
+      state.prepared[action.payload.level].push(spell) : state.prepared[action.payload.level] = [spell]
+    },
+    changePrepared: (state, action) => {
+      //requires { level: number, old: obj, new: obj}
+      const level = action.payload.level
+      //Compare indexes at a level to the index of the provided old spell
+      const index = state.prepared[level].map(spell => spell.index).indexOf(action.payload.old.index)
+      state.prepared[level] = state.prepared[level].splice(index, 1, action.payload.new)
+    },
     updateSpells: (state, action) => {
       state.spells = action.payload
     },
@@ -128,12 +148,12 @@ export const npcSlice = createSlice({
     builder.addCase(updateSpellcasting.rejected, (state, action) => {
       state.error = action.error
     })
-    builder.addCase(loadRandomSpells.fulfilled), (state, action) => {
-      state.spellsKnown = action.payload
+    builder.addCase(loadRelevantSpells.fulfilled), (state, action) => {
+      state.spells = action.payload
     }
   }
 })
 
-export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, resetSpellcasting } = npcSlice.actions
+export const { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, resetSpellcasting, addPrepared, changePrepared } = npcSlice.actions
 
 export default npcSlice.reducer

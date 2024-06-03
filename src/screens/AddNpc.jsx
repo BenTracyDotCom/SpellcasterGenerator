@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadSpellbook, fetchSpells, filterSpells } from '../features/spellbook/spellbookSlice';
-import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting, loadRandomSpells } from '../features/npcs/NpcSlice'
+import { loadClasses, updateModifiers, updateSlots, updateSpellsKnown, updateSpells, updateNpc, updateClass, updateSpellcasting, resetSpellcasting, loadRelevantSpells } from '../features/npcs/NpcSlice'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -138,8 +138,9 @@ export default function AddNpc({ navigation }) {
     //TODO: Fix this function
     //dispatch(updateModifiers())
     // Navigate to "Spellbook" page, where we'll complete entry
-    dispatch(loadRandomSpells({ slots: slots, clas: clas }))
+    dispatch(loadRelevantSpells({ slots: slots, clas: clas }))
     dispatch(updateNpc(form))
+    navigation.navigate("Spellbook")
     // navigation.navigate("Spellbook", {
     //   spells: spells,
     //   spellSlots: slots,

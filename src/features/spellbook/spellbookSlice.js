@@ -5,6 +5,7 @@ import { default as db } from "../../utilities/db.mjs";
 import { default as p } from "../../utilities/parsers.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//This is only necessary when editing spells of an ALREADY CREATED npc
 export const fetchSpells = createAsyncThunk(
   'npc/fetchSpells',
   async () => {
@@ -26,7 +27,8 @@ export const spellbookSlice = createSlice({
       swap: true,
       filter: ['', undefined],
       clas: 'All',
-    }
+    },
+    remaining: 0
   },
   reducers: {
     //loads all simple spells into this state
@@ -40,6 +42,9 @@ export const spellbookSlice = createSlice({
       Object.keys(action.payload).forEach(key => {
         state.modal[key] = action.payload[key]
       })
+    },
+    setRemaining: (state, action) => {
+      state.remaining = action.payload
     },
     //e.g. "Where 'class' === 'wizard'" filter looks like ['class', 'wizard']
     //Better handled by specific attributes as below
@@ -69,6 +74,6 @@ export const spellbookSlice = createSlice({
   }
 })
 
-export const { loadSpellbook, toggleModal, updateModal, filterSpells, filterModalSpells, filterModalByClass, filterModalByLevel } = spellbookSlice.actions
+export const { loadSpellbook, toggleModal, updateModal, setRemaining, filterSpells, filterModalSpells, filterModalByClass, filterModalByLevel } = spellbookSlice.actions
 
 export default spellbookSlice.reducer
