@@ -13,8 +13,8 @@ export default function ClickableSpell({ navigation, spell}) {
 
   return(
     <View>
-      <TouchableOpacity onPress={handlePress}>
-        <Text>{spell.name}</Text>
+      <TouchableOpacity onPress={handlePress} className="p-1 border-2 rounded-full" style={{ borderColor: "#f5f4df"}}>
+        <Text className="">{spell.name}</Text>
       </TouchableOpacity>
     </View>
   )

@@ -25,16 +25,23 @@ export default function SlotInfo({ level, maxSlots }) {
   }
 
   return (
-    <View className="flex flex-row items-center justify-around w-full border-2 border-primary">
-      <View className="border-2 rounded-full px-2">
+    <View className="flex flex-row items-center justify-start w-full pb-2">
+      {/* <View className="border-2 rounded-full px-2">
         <Text>{level}</Text>
-      </View>
-      <Text>{`Total: ${maxSlots}`}</Text>
+      </View> */}
+      <Text className="px-2">{`Total: ${maxSlots} Slots`}</Text>
       <Tally count={count} max={maxSlots} />
-      <View className="flex flex-row w-min">
-        <Button text="+" onPress={handleIncrement} />
+      <View className="flex flex-row w-min px-3 space-x-5">
+        <TouchableOpacity onPress={handleIncrement} className="px-3 py-1 rounded-full" style={{ backgroundColor: "#40f4f7"}}>
+        <Text>+</Text>
+        </TouchableOpacity>
+        {/* <Button text="+" onPress={handleIncrement} /> */}
+        <TouchableOpacity onPress={handleReset} className="px-3 py-1 rounded-full" style={{ backgroundColor: "#f7a840"}}>
+          <Text>R</Text>
+        </TouchableOpacity>
         {/* <Button text="-" onPress={handleDecrement} /> */}
-        <Button text="R" onPress={handleReset} />
+
+        {/* <Button text="R" onPress={handleReset} /> */}
       </View>
     </View>
   )

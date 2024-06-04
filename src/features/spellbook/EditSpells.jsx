@@ -33,44 +33,34 @@ export default function EditSpells({ route, navigation }) {
     const fetchSpells = async () => {
       const spells = await db.getSimpleSpells()
       const npcSpells = []
+      let highest = 0;
+      if(clas === "Warlock"){
+        for (let i = slots.length; i >= 0; i --){
+          if(slots[i]){
+            highest = i
+            break
+          }
+        }
+      }
       for (let i = 0; i < slots.length; i++) {
-        if (clas.toUpperCase === "WARLOCK" || slots[i]) {
+        if ((clas === "Warlock" && i <= highest)|| slots[i]) {
           npcSpells[i] = spells.filter(spell => (parseInt(spell.level) === i) && spell.classes.some(classs => classs.name === clas))
         } else {
           break
         }
       }
-      /*Right now, this stores aaalll available spells on the NPC. This is OK because there are two separate state items on NPC: spells (all available spells for this npc) and spellsKnown(currently prepared). 
-      What we want to do is map slots and add spells per available slot and decrease remaining for each spell.
-      */
+
       dispatch(updateSpells(npcSpells))
     }
-    //TODO: only set this to max if the spellbook is empty
-    // dispatch(setRemaining(spellsKnown.spells_known))
     fetchSpells()
   }, [dispatch])
 
-  /*
-  npc: {
-    name: '',
-    race: race.name,
-    subrace: subrace.name,
-    clas: 'Cleric',
-    level: '1',
-    spellcastingAbility: 'wis',
-    modifiers: {cha: num, wis: num, ...},
-    spellsKnown: {},
-    spells: [],
-    prepared: 4
-  }
-  */
 
 
   const handleSave = () => {
     console.log(npc, "what we passing to save")
     dispatch(saveNpc(npc))
     navigation.navigate('Launch')
-    //We've finally got all our data consolidated. Make a db function to save the NPC!
   }
 
   return (
@@ -82,25 +72,18 @@ export default function EditSpells({ route, navigation }) {
       <Text className="mx-auto">{`Total prepared: ${spellsKnown.spells_known}`}</Text>
       <Text className="mx-auto">{`Remaining: ${remaining}`}</Text>
       <ScrollView className="my-4">
-        {/* {relevantLevels.length ? relevantLevels.map((slots, i) => (<SpellbookTile spells={spells} spellsKnown={spellsKnown} level={i} key={i} navigation={navigation} relevantLevels={relevantLevels} spellSlots={spellSlots} />)) : null} */}
         {slots.length ? slots.map((slot, i) => {
           if (i === 0) {
             return <CantripsTile key="caintrips"/>
           }
-          if (slots[i]) {
+          if (slots[i] || (npc.clas === "Warlock" 
+           && npc.spells[i]
+        )) {
             return (
               <SpellsByLevel level={i} slots={slot} remaining={remaining} setRemaining={setRemaining}/>
-              // <View className="flex flex-row justify-between px-5" key={i}>
-              //   <Text>{`Level ${i} spells (${slot} slots)`}</Text>
-              //   <TouchableOpacity className="px-2 py-1 border-2 rounded-lg" style={{ backgroundColor: '#f2ca50' }}>
-              //     <Text>+</Text>
-              //   </TouchableOpacity>
-              // </View>
             )
           }
         }) : null}
-
-        {/* <Text>{JSON.stringify(spells)}</Text> */}
         <Button text="Save" onPress={handleSave} />
       </ScrollView>
     </SafeAreaView>
