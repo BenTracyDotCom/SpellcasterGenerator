@@ -5,21 +5,6 @@ import { default as bardLevel } from "../../utilities/bardLevel.mjs";
 import races from "../../utilities/races.mjs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-/*
-TODO:
-- Decide how to format spells:
-DONE: 3D array (easier to iterate thru than object, access is similar)
-
-- Spellbook editing page will deal with spells from the modal and from this state, so it might be easier for the selector statements to call these 'npcSpells' and those 'modalSpells'
-
-- Write a thunk to take in an arg for number of spells, pull all spells, filter by level, randomize and assign that many random spells to the spell object
-
-- Write an action to take in a new spell, an old spell, and swap the spell in the npc spell opject
-
-- Write an action to keep track of max spells and current spells in the spell object (we can either turn it red on the spellbook page or prevent further spells from being added, the former will be way easier)
-
-*/
-
 export const updateSpellcasting = createAsyncThunk(
   'npc/updateSpellcasting',
   async (payload) => {
@@ -40,7 +25,7 @@ export const loadRelevantSpells = createAsyncThunk(
     const simpleSpells = await db.getSimpleSpells()
     const relevantSpells = simpleSpells.filter(spell => spell.classes.some(classs => classs.name === clas))
       .filter(spell => spell.level <= highest)
-    console.log(highest, 'highest', clas, ' clas', simpleSpells[0], ' first simple spell', relevantSpells[0], ' first relevant spell')
+    // console.log(highest, 'highest', clas, ' clas', simpleSpells[0], ' first simple spell', relevantSpells[0], ' first relevant spell')
 
     const spells = []
     for (let i = 0; i < relevantSpells.length; i++) {
@@ -78,7 +63,19 @@ export const npcSlice = createSlice({
     level: '1',
     spellcastingAbility: 'wis',
     modifiers: {},
-    spellsKnown: {},
+    spellsKnown: {
+      "cantrips_known": 2,
+			"spells_known": 4,
+			"spell_slots_level_1": 2,
+			"spell_slots_level_2": 0,
+			"spell_slots_level_3": 0,
+			"spell_slots_level_4": 0,
+			"spell_slots_level_5": 0,
+			"spell_slots_level_6": 0,
+			"spell_slots_level_7": 0,
+			"spell_slots_level_8": 0,
+			"spell_slots_level_9": 0
+    },
     spells: [],
     prepared: [],
     proficiency: 2,

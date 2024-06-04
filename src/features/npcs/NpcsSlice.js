@@ -12,10 +12,17 @@ export const loadNpcs = createAsyncThunk(
 export const saveNpc = createAsyncThunk(
   'npcs/saveNpc',
   async (payload) => {
-    // console.log(payload, ' what was passed')
     const npc = payload
-    // console.log(npc, ' what we tryna save')
     const newNpcs = await db.storeNpc(npc)
+    return { newNpcs }
+  }
+)
+
+export const deleteNpc = createAsyncThunk(
+  'npcs/deleteNpc',
+  async (payload) => {
+    const npc = payload
+    const newNpcs = await db.removeNpc(npc)
     return { newNpcs }
   }
 )
@@ -39,7 +46,13 @@ export const npcsSlice = createSlice({
         state.npcs = storedNpcs
       }
     )
-    builder.addCase(saveNpc.fulfilled, 
+    builder.addCase(saveNpc.fulfilled,
+      (state, action) => {
+        const { newNpcs } = action.payload
+        state.npcs = newNpcs
+      }
+    )
+    builder.addCase(deleteNpc.fulfilled,
       (state, action) => {
         const { newNpcs } = action.payload
         state.npcs = newNpcs

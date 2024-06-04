@@ -124,6 +124,14 @@ const db = {
         JSON.parse(npcs)
       ))
   },
+  removeNpc: async function (npc) {
+    const stringNpcs = await AsyncStorage.getItem('npcs')
+    const npcs = JSON.parse(stringNpcs)
+    const toRemove = npcs.map(npc => npc.name).indexOf(npc.name)
+    npcs.splice(toRemove, 1)
+    AsyncStorage.setItem('npcs', JSON.stringify(npcs))
+    return npcs
+  },
 getSpellcastingInfo: async function (clas, level) {
   return this.getLevelInfo(clas, level)
     .then(info => {

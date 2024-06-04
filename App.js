@@ -33,6 +33,11 @@ export default function App() {
             <Stack.Screen
             name="Launch"
             component={Launch}
+            options={{
+              gestureEnabled: false,
+              headerLeft: () => <></>,
+              title: "My Spellcasters"
+            }}
             />
             <Stack.Screen
             name="Storage Test"
@@ -54,6 +59,9 @@ export default function App() {
             <Stack.Screen
             name="Add NPC"
             component={AddNpc}
+            options={{
+              title: "Add Spellcaster"
+            }}
             />
             <Stack.Screen
             name="Npc"

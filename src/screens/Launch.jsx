@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import NpcList from "../features/npcs/NpcList";
 import Button from "../components/Button";
 import SpellTile from "../features/spells/SpellTile";
@@ -17,6 +17,8 @@ export default function Launch({ navigation, route }) {
     dispatch(loadNpcs())
   }, [])
 
+  const [deletable, setDeletable] = useState(false)
+
 
   const handleStorageTest = () => {
     navigation.navigate('Storage Test')
@@ -25,13 +27,12 @@ export default function Launch({ navigation, route }) {
     navigation.navigate('Add NPC')
   }
 
-  //TODO: Handle deleting NPCs
-
   return(
-    <View>
-   {npcs ? <NpcList npcs={npcs} navigation={navigation} route={route}/> : null}
-      <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
-      <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
-    </View>
+    <ScrollView>
+   {npcs ? <NpcList npcs={npcs} navigation={navigation} route={route} deletable={deletable}/> : null}
+        <Button text={"+  Add Spellcaster  +"} onPress={handleAddNpc} color={"#eab308"} />
+{ deletable ? <Button text="Finish Deleting" onPress={() => setDeletable(false)}/> : <Button text={"-  Remove Spellcaster  -"} onPress={() => {setDeletable(true)}}/>}
+      {/* <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/> */}
+    </ScrollView>
   )
 }
