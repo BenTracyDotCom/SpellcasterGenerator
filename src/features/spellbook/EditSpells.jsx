@@ -11,7 +11,7 @@ import SpellsByLevel from "./SpellsByLevel";
 import { toggleModal } from "./spellbookSlice";
 import { updateSpells } from "../npcs/NpcSlice";
 import { updateSpellsKnown } from "../npcs/NpcSlice";
-import { addNpc } from "../npcs/NpcsSlice";
+import { saveNpc } from "../npcs/NpcsSlice";
 
 export default function EditSpells({ route, navigation }) {
 
@@ -67,7 +67,8 @@ export default function EditSpells({ route, navigation }) {
 
 
   const handleSave = () => {
-    dispatch(addNpc(npc))
+    console.log(npc, "what we passing to save")
+    dispatch(saveNpc(npc))
     navigation.navigate('Launch')
     //We've finally got all our data consolidated. Make a db function to save the NPC!
   }

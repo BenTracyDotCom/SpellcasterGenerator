@@ -11,7 +11,6 @@ export default function Npc({ route, navigation }) {
 
   return (
     <View>
-      <Text>NPC goes here!</Text>
       {npc.slots ? npc.slots.map((slot, i) => {
         if(slot && i > 0){
           return(

@@ -106,44 +106,56 @@ const db = {
       AsyncStorage.setItem('npcs', JSON.stringify(npcs))
     }
   },
+  storeNpc: async function (npc) {
+    const npcs = await AsyncStorage.getItem('npcs')
+    if (!npcs) {
+      AsyncStorage.setItem('npcs', JSON.stringify([npc]))
+      return [ npc ]
+    } else {
+      const parsedNpcs = JSON.parse(npcs)
+      parsedNpcs.push(npc)
+      AsyncStorage.setItem('npcs', JSON.stringify(parsedNpcs))
+      return parsedNpcs
+    } I
+  },
   getNpcs: async function () {
     return AsyncStorage.getItem('npcs')
-    .then(npcs => (
-      JSON.parse(npcs)
-    ))
+      .then(npcs => (
+        JSON.parse(npcs)
+      ))
   },
-  getSpellcastingInfo: async function (clas, level) {
-    return this.getLevelInfo(clas, level)
-      .then(info => {
-        const relevantInfo = {};
-        const spellcasting = info.spellcasting
-        for (let i = 0; i < Object.keys(spellcasting).length; i++) {
-          let key = Object.keys(spellcasting)[i]
-          if (spellcasting[key] > 0) {
-            relevantInfo[key] = spellcasting[key]
-          }
+getSpellcastingInfo: async function (clas, level) {
+  return this.getLevelInfo(clas, level)
+    .then(info => {
+      const relevantInfo = {};
+      const spellcasting = info.spellcasting
+      for (let i = 0; i < Object.keys(spellcasting).length; i++) {
+        let key = Object.keys(spellcasting)[i]
+        if (spellcasting[key] > 0) {
+          relevantInfo[key] = spellcasting[key]
         }
-        return relevantInfo
-      }).catch(console.log)
-  },
+      }
+      return relevantInfo
+    }).catch(console.log)
+},
 
-  getSpells: async function (clas) {
-    console.log('getting spells...')
-    return AsyncStorage.getItem(clas.index ? clas.index + '-spells' : clas + '-spells')
-      .then((spells) => (
-        JSON.parse(spells)
-      ))
-  },
+getSpells: async function (clas) {
+  console.log('getting spells...')
+  return AsyncStorage.getItem(clas.index ? clas.index + '-spells' : clas + '-spells')
+    .then((spells) => (
+      JSON.parse(spells)
+    ))
+},
 
-  getSpell: async function (index) {
-    return AsyncStorage.getItem(index)
-      .then(spell => (
-        JSON.parse(spell)
-      ))
-  },
-  getClass: async function (clas) {
-    return AsyncStorage.getItem(clas.index ? clas.index : clas)
-  }
+getSpell: async function (index) {
+  return AsyncStorage.getItem(index)
+    .then(spell => (
+      JSON.parse(spell)
+    ))
+},
+getClass: async function (clas) {
+  return AsyncStorage.getItem(clas.index ? clas.index : clas)
+}
 }
 
 export default db

@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { View, Text, TouchableOpacity } from "react-native";
 import NpcList from "../features/npcs/NpcList";
 import Button from "../components/Button";
 import SpellTile from "../features/spells/SpellTile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { loadNpcs } from "../features/npcs/NpcsSlice";
 
 
 export default function Launch({ navigation, route }) {
+  const dispatch = useDispatch()
 
-  const [npcsLoaded, setNpcsLoaded] = useState(false)
-  const [npcs, setNPCs] = useState([])
+  const { npcs } = useSelector(state => state.npcs)
 
   useEffect(() => {
-    AsyncStorage.getItem('npcs')
-    .then(data => {
-      setNPCs(JSON.parse(data))
-    })
+    dispatch(loadNpcs())
   }, [])
 
 
@@ -30,10 +29,9 @@ export default function Launch({ navigation, route }) {
 
   return(
     <View>
-      <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
-      <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
    {npcs ? <NpcList npcs={npcs} navigation={navigation} route={route}/> : null}
-      <SpellTile navigation={navigation}/>
+      <Button text={"Add NPC"} onPress={handleAddNpc} color={"#eab308"} />
+      <Button text={"Storage Test Screen"} onPress={handleStorageTest} color={"#0d9488"}/>
     </View>
   )
 }
